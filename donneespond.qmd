@@ -13,11 +13,25 @@ Ici, nous mobilisons une version allégée de la base de données "Histoire de v
 
 -   Enregistrer ce script dans un dossier (par exemple "Formation R") en le nommant par exemple 4DonneesPond.R.
 
--   Charger les packages mobilisés dans le chapitre précédents (tidyverse, questionr, kableExtra a minima). Installer et charger également les packages Hmisc et descriptio (de Nicolas Robette) qui contiennent quelques fonctions utiles pour pondérer des statistiques.
+-   Charger les packages mobilisés dans le chapitre précédents (tidyverse, questionr, kableExtra a minima). Installer et charger également le package Hmisc qui contient quelques fonctions utiles pour pondérer des statistiques.
 
 -   Charger aussi ggplot2 (esquisse n'est pas utile ici).
 
 -   Charger la base de données Histoire de vie grâce à la commande data("hdv2003").
+
+-   Nous allons également installer le package descriptio créé par Nicolas Robette, mais au moment d'écrire ce chapitre, la version la plus à jour n'est pas encore sur le CRAN, mais disponible sur son [repository](https://framagit.org/nicolas-robette/descriptio) (\>=1.4.2, sur le CRAN : 1.4.1). Pour installer et charger cette version, on pourra faire tourner les lignes de code suivantes :
+
+```{r}
+#| eval: false
+if (!require(devtools)){
+  install.packages('devtools')
+  library(devtools)
+}
+detach("package:descriptio", unload = TRUE, character.only = TRUE)
+remove.packages("descriptio")
+install_git("https://framagit.org/nicolas-robette/descriptio",force=T)
+library(descriptio)
+```
 :::
 
 ## R et les données pondérées
@@ -329,21 +343,30 @@ ggplot(df_tab, aes(x = occup, y = prop, fill=age_rec)) +
 
 ### Le test du chi-deux et le V de Cramer avec pondération
 
-Le test du chi-deux est sensible à la taille de l'échantillon. Or si on crée simplement un tableau des effectifs pondérés, on "grossit" artificiellement la taille de l'échantillon en utilisant chisq.test. On pourra avoir recours à la fonction assoc.twocat() dans le package descriptio qui rassemble de nombreuses mesures d'association entre deux variables catégorielles. À noter que le test du chi-2 est réalisé à partir d'un "[test de permutation](https://nicolas-robette.github.io/GDAtools/articles/french/Tutoriel_descr.html)" (plutôt qu'un test fréquentiste, il faut donc choisir un nombre de permutations avec l'argument nperm, ici 100 mais choisir plutôt 1000).
+Le test du chi-deux est sensible à la taille de l'échantillon. Or si on crée simplement un tableau des effectifs pondérés, on "grossit" artificiellement la taille de l'échantillon en utilisant chisq.test.
+
+On pourra avoir recours à la fonction assoc.twocat() dans le package descriptio qui rassemble de nombreuses mesures d'association entre deux variables catégorielles.
+
+-   À noter que le test du chi-2 est ici réalisé à partir d'un "[test de permutation](https://nicolas-robette.github.io/GDAtools/articles/french/Tutoriel_descr.html)" (plutôt qu'un test fréquentiste, il faut donc choisir un nombre de permutations avec l'argument nperm, ici 100 mais choisir plutôt 1000).
+
+-   À noter également que dans la fonction il est conseillé d'utiliser des poids "normalisés" à la taille de l'échantillon (c'est-à-dire dont la somme est égale au nombre d'individus enquêtés) pour ne pas distordre le calcul du chi-2.
 
 ```{r}
 #| eval: false
-tri<-assoc.twocat(hdv2003$age_rec,hdv2003$occup, weights=hdv2003$poids,nperm=100,na.rm=T)
+hdv2003$poidsn<- length(hdv2003$poids) * hdv2003$poids / sum(hdv2003$poids)
+sum(hdv2003$poidsn)
+tri<-assoc.twocat(hdv2003$age_rec,hdv2003$occup, weights=hdv2003$poidsn,nperm=100)
+tri$global$chi.squared
 tri$global$permutation.pvalue
 ```
 
 Pour obtenir le V de Cramer :
 
 ```{r}
+weighted.cramer(hdv2003$age_rec, hdv2003$occup, weights = hdv2003$poids)
+#Ou simplement : 
 tri$global$cramer.v
 ```
-
-À noter qu'il est ici exprimé en pourcentage (et varie donc entre 0 et 100 plutôt que 0 et 1).
 
 ## Exercices
 

@@ -205,6 +205,8 @@ ggplot(Salaires) +
 
 -   et theme_minimal assigne un "theme" de fond pour le graphique.
 
+Pour une présentation un peu plus avancée de ggplot et de son fonctionnement, on pourra s'appuyer sur une [présentation et les ressources](https://juba.github.io/tidyverse/08-ggplot2.html) proposées par Julien Barnier.
+
 ## Décrire une variable qualitative
 
 Décrire une variable quantitative c'est bien beau, mais nous avons souvent pas mal de variables qualitatives dans nos jeux de données. Comment la décrire ?

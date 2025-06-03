@@ -305,7 +305,8 @@ Exercice
 <li><p>Créer un script vide.</p></li>
 <li><p>Enregistrer ce script dans un dossier (par exemple “Formation R”) en le nommant par exemple 5statmultis.R.</p></li>
 <li><p>Charger les packages mobilisés dans le chapitre précédents (tidyverse, questionr, kableExtra a minima).</p></li>
-<li><p>Installer et charger également les packages Hmisc, descriptio (de Nicolas Robette), FactoMineR, explor qui contiennent quelques fonctions utiles pour pondérer des statistiques et réaliser des analyses multivariées.</p></li>
+<li><p>Installer et charger également les packages Hmisc, FactoMineR, explor qui contiennent quelques fonctions utiles pour pondérer des statistiques et réaliser des analyses multivariées.</p></li>
+<li><p>Pour le package descriptio (de Nicolas Robette), on veillera à installer la dernière version sur son repository grâce aux commandes présentées dans le chapitre précédent.</p></li>
 <li><p>Charger la base de données Histoire de vie grâce à la commande data(“hdv2003”).</p></li>
 </ul>
 </div>
@@ -416,17 +417,33 @@ Exercice
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pack_rows</span>(<span class="st">"Homme"</span>, <span class="dv">1</span>, <span class="dv">9</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pack_rows</span>(<span class="st">"Femme"</span>, <span class="dv">10</span>, <span class="dv">18</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Cette syntaxe n’est, avouons-le, pas des plus intuitives. On pourra si on le souhaite préférer s’appuyer sur le package descriptio et sur la fonction assoc.twocat.by() :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>tri3<span class="ot">&lt;-</span><span class="fu">assoc.twocat.by</span>(hdv2003<span class="sc">$</span>nivetud, hdv2003<span class="sc">$</span>sport, hdv2003<span class="sc">$</span>sexe,<span class="at">na.rm=</span>T)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>tri3<span class="sc">$</span>tables<span class="sc">$</span>rprop</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#Pour en faire un joli tableau : </span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(tri3<span class="sc">$</span>tables<span class="sc">$</span>rprop)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Construction du tableau</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>t <span class="sc">|&gt;</span> </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">col.names =</span> <span class="cn">NULL</span>,<span class="at">digits =</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_header_above</span>(<span class="fu">c</span>(<span class="st">"Diplôme"</span> <span class="ot">=</span> <span class="dv">1</span>, <span class="st">"Oui"</span> <span class="ot">=</span> <span class="dv">1</span>, <span class="st">"Non"</span> <span class="ot">=</span> <span class="dv">1</span>, <span class="st">"Total"</span> <span class="ot">=</span> <span class="dv">1</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"Oui"</span> <span class="ot">=</span> <span class="dv">1</span>, <span class="st">"Non"</span> <span class="ot">=</span> <span class="dv">1</span>, <span class="st">"Total"</span> <span class="ot">=</span> <span class="dv">1</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_header_above</span>(<span class="fu">c</span>(<span class="st">" "</span> <span class="ot">=</span> <span class="dv">1</span>, <span class="st">"Homme"</span> <span class="ot">=</span> <span class="dv">3</span>, <span class="st">"Femme"</span> <span class="ot">=</span> <span class="dv">3</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_classic_2</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Pour faire un diagramme à barres :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">&lt;-</span>hdv2003 <span class="sc">|&gt;</span> <span class="fu">group_by</span>(nivetud,cinema) <span class="sc">|&gt;</span> <span class="fu">freqtable</span>(sexe,<span class="at">weights=</span>poids,<span class="at">na.rm =</span> T) <span class="sc">|&gt;</span> <span class="fu">rprop</span>(<span class="at">total=</span>F)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>df_tab<span class="ot">&lt;-</span><span class="fu">as.data.frame</span>(tab)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_tab,<span class="fu">aes</span>(<span class="at">x=</span>nivetud,<span class="at">y=</span>Freq,<span class="at">fill=</span>cinema))<span class="sc">+</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>)<span class="sc">+</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>sexe)<span class="sc">+</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Proportion (%)"</span>,<span class="at">x=</span><span class="st">"Diplôme"</span>,<span class="at">fill=</span><span class="st">"Est allé au cinéma"</span>)<span class="sc">+</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()<span class="sc">+</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()<span class="sc">+</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">&lt;-</span>hdv2003 <span class="sc">|&gt;</span> <span class="fu">group_by</span>(nivetud,cinema) <span class="sc">|&gt;</span> <span class="fu">freqtable</span>(sexe,<span class="at">weights=</span>poids,<span class="at">na.rm =</span> T) <span class="sc">|&gt;</span> <span class="fu">rprop</span>(<span class="at">total=</span>F)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>df_tab<span class="ot">&lt;-</span><span class="fu">as.data.frame</span>(tab)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_tab,<span class="fu">aes</span>(<span class="at">x=</span>nivetud,<span class="at">y=</span>Freq,<span class="at">fill=</span>cinema))<span class="sc">+</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>)<span class="sc">+</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>sexe)<span class="sc">+</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Proportion (%)"</span>,<span class="at">x=</span><span class="st">"Diplôme"</span>,<span class="at">fill=</span><span class="st">"Est allé au cinéma"</span>)<span class="sc">+</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()<span class="sc">+</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()<span class="sc">+</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="lanalyse-géométrique-des-données-le-cas-de-lacm" class="level2" data-number="5.3">
@@ -437,12 +454,12 @@ Exercice
 <h3 data-number="5.3.1" class="anchored" data-anchor-id="réaliser-une-acm-avec-factominer"><span class="header-section-number">5.3.1</span> Réaliser une ACM avec FactoMineR</h3>
 <p>On sélectionne d’abord les variables de fréquence de pratique culturelle qui sont déjà codées sous forme catégorielle et deux variables qualitative supplémentaire, le sexe et la PCS (variable qualif).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>d_acm<span class="ot">&lt;-</span> hdv2003 <span class="sc">|&gt;</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(hard.rock,lecture.bd,peche.chasse,cuisine,bricol,cinema,sport,sexe,qualif)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>d_acm<span class="ot">&lt;-</span> hdv2003 <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(hard.rock,lecture.bd,peche.chasse,cuisine,bricol,cinema,sport,sexe,qualif)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>On utilise ensuite la fonction MCA pour lancer une ACM :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>acm<span class="ot">&lt;-</span><span class="fu">MCA</span>(d_acm,<span class="at">quali.sup=</span><span class="fu">c</span>(<span class="dv">8</span>,<span class="dv">9</span>),<span class="at">row.w=</span>hdv2003<span class="sc">$</span>poids)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>acm<span class="ot">&lt;-</span><span class="fu">MCA</span>(d_acm,<span class="at">quali.sup=</span><span class="fu">c</span>(<span class="dv">8</span>,<span class="dv">9</span>),<span class="at">row.w=</span>hdv2003<span class="sc">$</span>poids)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>L’argument quali.sup permet d’indiquer les colonnes des variables supplémentaires de l’analyse. Par défaut, les autres sont considérées comme des variables actives.</p>
 <p>On a veillé à ajouter l’argument row.w qui permet de pondérer les individus dans l’analyse. Cette analyse produit trois graphiques présentés en bas à droite :</p>
@@ -457,7 +474,7 @@ Exercice
 <h3 data-number="5.3.2" class="anchored" data-anchor-id="explorer-les-résultats-dune-acm"><span class="header-section-number">5.3.2</span> Explorer les résultats d’une ACM</h3>
 <p>On peut avoir recours à l’interface explor du package explor de Julien Barnier pour visualiser les résultats de l’ACM :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">explor</span>(acm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">explor</span>(acm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">

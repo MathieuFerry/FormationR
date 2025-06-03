@@ -309,10 +309,21 @@ Exercice
 <ul>
 <li><p>Créer un script vide.</p></li>
 <li><p>Enregistrer ce script dans un dossier (par exemple “Formation R”) en le nommant par exemple 4DonneesPond.R.</p></li>
-<li><p>Charger les packages mobilisés dans le chapitre précédents (tidyverse, questionr, kableExtra a minima). Installer et charger également les packages Hmisc et descriptio (de Nicolas Robette) qui contiennent quelques fonctions utiles pour pondérer des statistiques.</p></li>
+<li><p>Charger les packages mobilisés dans le chapitre précédents (tidyverse, questionr, kableExtra a minima). Installer et charger également le package Hmisc qui contient quelques fonctions utiles pour pondérer des statistiques.</p></li>
 <li><p>Charger aussi ggplot2 (esquisse n’est pas utile ici).</p></li>
 <li><p>Charger la base de données Histoire de vie grâce à la commande data(“hdv2003”).</p></li>
+<li><p>Nous allons également installer le package descriptio créé par Nicolas Robette, mais au moment d’écrire ce chapitre, la version la plus à jour n’est pas encore sur le CRAN, mais disponible sur son <a href="https://framagit.org/nicolas-robette/descriptio">repository</a> (&gt;=1.4.2, sur le CRAN : 1.4.1). Pour installer et charger cette version, on pourra faire tourner les lignes de code suivantes :</p></li>
 </ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(devtools)){</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">'devtools'</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(devtools)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">detach</span>(<span class="st">"package:descriptio"</span>, <span class="at">unload =</span> <span class="cn">TRUE</span>, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">remove.packages</span>(<span class="st">"descriptio"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">install_git</span>(<span class="st">"https://framagit.org/nicolas-robette/descriptio"</span>,<span class="at">force=</span>T)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(descriptio)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </div>
 </div>
 <section id="r-et-les-données-pondérées" class="level2" data-number="4.1">
@@ -328,7 +339,7 @@ Exercice
 </ul>
 <p>Décrivons rapidement le jeu de données hdv2003 :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(hdv2003)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(hdv2003)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Le fichier contient 20 variables, dont id qui est un identifiant des observations et poids qui est la variable de pondération (occup est le statut par rapport à l’emploi, qualif est la PCS, clso est le sentiment d’appartenance à une classe sociale).</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercice">
@@ -351,19 +362,6 @@ Exercice
 <h3 data-number="4.2.1" class="anchored" data-anchor-id="résumer-une-variable-quantitative-avec-les-nombres-de-tukey"><span class="header-section-number">4.2.1</span> Résumer une variable quantitative avec les nombres de Tukey</h3>
 <p>Pour obtenir les 5 nombres de Tukey d’une variable quantitative, il faut tenir compte des poids pour calculer le Q1, la médiane et le Q3, ce qu’on peut faire avec la variable wtd.quantile du package Hmisc. Ici, on étudie la distribution du nombre d’heures de visionnage de la télévision en fonction du sexe.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>hdv2003 <span class="sc">|&gt;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sexe) <span class="sc">|&gt;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">min    =</span> <span class="fu">min</span>(heures.tv, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">q1     =</span> <span class="fu">wtd.quantile</span>(heures.tv,<span class="at">weights=</span>poids, <span class="at">probs=</span><span class="fl">0.25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">median =</span> <span class="fu">wtd.quantile</span>(heures.tv, <span class="at">weights=</span>poids,<span class="at">probs=</span>.<span class="dv">5</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">q3     =</span> <span class="fu">wtd.quantile</span>(heures.tv,<span class="at">weights=</span>poids,<span class="at">probs=</span> <span class="fl">0.75</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">max    =</span> <span class="fu">max</span>(heures.tv, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>L’argument weights tient bien compte du poids de pondération.</p>
-<p>Si on veut inverser les lignes et les colonnes on pourra avoir recours à cette petite transformation :</p>
-<div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>hdv2003 <span class="sc">|&gt;</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sexe) <span class="sc">|&gt;</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
@@ -372,85 +370,98 @@ Exercice
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">median =</span> <span class="fu">wtd.quantile</span>(heures.tv, <span class="at">weights=</span>poids,<span class="at">probs=</span>.<span class="dv">5</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">q3     =</span> <span class="fu">wtd.quantile</span>(heures.tv,<span class="at">weights=</span>poids,<span class="at">probs=</span> <span class="fl">0.75</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">max    =</span> <span class="fu">max</span>(heures.tv, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(min<span class="sc">:</span>max) <span class="sc">|&gt;</span> <span class="fu">pivot_wider</span>(<span class="at">names_from=</span>sexe,<span class="at">values_from=</span>value) <span class="sc">|&gt;</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>() <span class="sc">|&gt;</span> <span class="fu">kable_classic_2</span>(<span class="at">full_width=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>L’argument weights tient bien compte du poids de pondération.</p>
+<p>Si on veut inverser les lignes et les colonnes on pourra avoir recours à cette petite transformation :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>hdv2003 <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sexe) <span class="sc">|&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">min    =</span> <span class="fu">min</span>(heures.tv, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">q1     =</span> <span class="fu">wtd.quantile</span>(heures.tv,<span class="at">weights=</span>poids, <span class="at">probs=</span><span class="fl">0.25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">median =</span> <span class="fu">wtd.quantile</span>(heures.tv, <span class="at">weights=</span>poids,<span class="at">probs=</span>.<span class="dv">5</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">q3     =</span> <span class="fu">wtd.quantile</span>(heures.tv,<span class="at">weights=</span>poids,<span class="at">probs=</span> <span class="fl">0.75</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">max    =</span> <span class="fu">max</span>(heures.tv, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(min<span class="sc">:</span>max) <span class="sc">|&gt;</span> <span class="fu">pivot_wider</span>(<span class="at">names_from=</span>sexe,<span class="at">values_from=</span>value) <span class="sc">|&gt;</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>() <span class="sc">|&gt;</span> <span class="fu">kable_classic_2</span>(<span class="at">full_width=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="lhistogramme-pondéré" class="level3" data-number="4.2.2">
 <h3 data-number="4.2.2" class="anchored" data-anchor-id="lhistogramme-pondéré"><span class="header-section-number">4.2.2</span> L’histogramme pondéré</h3>
 <p>Pour obtenir un histogramme en tenant compte de la pondération, il faut ajouter l’argument weight dans l’aes.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hdv2003, <span class="fu">aes</span>(<span class="at">x =</span> age,<span class="at">y =</span> ..density.., <span class="at">weight =</span> poids)) <span class="sc">+</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">5</span>, <span class="at">fill =</span> <span class="st">"grey"</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histogramme pondéré de l'âge"</span>, <span class="at">x =</span> <span class="st">"Âge"</span>, <span class="at">y =</span> <span class="st">"Densité"</span>)<span class="sc">+</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hdv2003, <span class="fu">aes</span>(<span class="at">x =</span> age,<span class="at">y =</span> ..density.., <span class="at">weight =</span> poids)) <span class="sc">+</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">5</span>, <span class="at">fill =</span> <span class="st">"grey"</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histogramme pondéré de l'âge"</span>, <span class="at">x =</span> <span class="st">"Âge"</span>, <span class="at">y =</span> <span class="st">"Densité"</span>)<span class="sc">+</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Si on préfère les effectifs pondérés :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hdv2003, <span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">weight =</span> poids)) <span class="sc">+</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">5</span>, <span class="at">fill =</span> <span class="st">"grey"</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histogramme pondéré de l'âge"</span>, <span class="at">x =</span> <span class="st">"Âge"</span>, <span class="at">y =</span> <span class="st">"Effectifs pondérés"</span>)<span class="sc">+</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hdv2003, <span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">weight =</span> poids)) <span class="sc">+</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">5</span>, <span class="at">fill =</span> <span class="st">"grey"</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histogramme pondéré de l'âge"</span>, <span class="at">x =</span> <span class="st">"Âge"</span>, <span class="at">y =</span> <span class="st">"Effectifs pondérés"</span>)<span class="sc">+</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="la-boîte-à-moustaches-pondérée" class="level3" data-number="4.2.3">
 <h3 data-number="4.2.3" class="anchored" data-anchor-id="la-boîte-à-moustaches-pondérée"><span class="header-section-number">4.2.3</span> La boîte à moustaches pondérée</h3>
 <p>On peut manuellement calculer les seuils du boxplot et les indiquer à ggplot :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>box_stats <span class="ot">&lt;-</span> hdv2003 <span class="sc">%&gt;%</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sexe) <span class="sc">%&gt;%</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">ymin  =</span> <span class="fu">wtd.quantile</span>(age, poids, <span class="at">probs =</span> <span class="fl">0.25</span>)<span class="sc">-</span><span class="fl">1.5</span><span class="sc">*</span>(<span class="fu">wtd.quantile</span>(age, poids, <span class="at">probs =</span> <span class="fl">0.5</span>)<span class="sc">-</span><span class="fu">wtd.quantile</span>(age, poids, <span class="at">probs =</span> <span class="fl">0.25</span>)),</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">lower =</span> <span class="fu">wtd.quantile</span>(age, poids, <span class="at">probs =</span> <span class="fl">0.25</span>),</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">middle=</span> <span class="fu">wtd.quantile</span>(age, poids, <span class="at">probs =</span> <span class="fl">0.50</span>),</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">upper =</span> <span class="fu">wtd.quantile</span>(age, poids, <span class="at">probs =</span> <span class="fl">0.75</span>),</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">ymax  =</span> <span class="fu">wtd.quantile</span>(age, poids, <span class="at">probs =</span> <span class="fl">0.75</span>)<span class="sc">+</span><span class="fl">1.5</span><span class="sc">*</span>(<span class="fu">wtd.quantile</span>(age, poids, <span class="at">probs =</span> <span class="fl">0.5</span>)<span class="sc">-</span><span class="fu">wtd.quantile</span>(age, poids, <span class="at">probs =</span> <span class="fl">0.25</span>))</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(box_stats, <span class="fu">aes</span>(<span class="at">x =</span> sexe,<span class="at">color=</span>sexe)) <span class="sc">+</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymin =</span> ymin,</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">lower =</span> lower,</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">middle =</span> middle,</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">upper =</span> upper,</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymax =</span> ymax</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">stat =</span> <span class="st">"identity"</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="co">#Note 1 : par défaut dans geom_boxplot, on peut aussi ajouter l'argument weight. </span></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="co">#Note 2 : Le graphique serait légèrement différent au niveau des moustaches car si Q1-1.5*IQR ou Q3+1.5*IQR correspondent à des valeurs non observées dans l'échantillon, alors les moustaches retiennent les valeurs minimum et maximum observées dans l'échantillon, ce qui est ma foi tout à fait raisonnable ! </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>box_stats <span class="ot">&lt;-</span> hdv2003 <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sexe) <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">ymin  =</span> <span class="fu">wtd.quantile</span>(age, poids, <span class="at">probs =</span> <span class="fl">0.25</span>)<span class="sc">-</span><span class="fl">1.5</span><span class="sc">*</span>(<span class="fu">wtd.quantile</span>(age, poids, <span class="at">probs =</span> <span class="fl">0.5</span>)<span class="sc">-</span><span class="fu">wtd.quantile</span>(age, poids, <span class="at">probs =</span> <span class="fl">0.25</span>)),</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">lower =</span> <span class="fu">wtd.quantile</span>(age, poids, <span class="at">probs =</span> <span class="fl">0.25</span>),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">middle=</span> <span class="fu">wtd.quantile</span>(age, poids, <span class="at">probs =</span> <span class="fl">0.50</span>),</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">upper =</span> <span class="fu">wtd.quantile</span>(age, poids, <span class="at">probs =</span> <span class="fl">0.75</span>),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">ymax  =</span> <span class="fu">wtd.quantile</span>(age, poids, <span class="at">probs =</span> <span class="fl">0.75</span>)<span class="sc">+</span><span class="fl">1.5</span><span class="sc">*</span>(<span class="fu">wtd.quantile</span>(age, poids, <span class="at">probs =</span> <span class="fl">0.5</span>)<span class="sc">-</span><span class="fu">wtd.quantile</span>(age, poids, <span class="at">probs =</span> <span class="fl">0.25</span>))</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(box_stats, <span class="fu">aes</span>(<span class="at">x =</span> sexe,<span class="at">color=</span>sexe)) <span class="sc">+</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymin =</span> ymin,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">lower =</span> lower,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">middle =</span> middle,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">upper =</span> upper,</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymax =</span> ymax</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">stat =</span> <span class="st">"identity"</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co">#Note 1 : par défaut dans geom_boxplot, on peut aussi ajouter l'argument weight. </span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="co">#Note 2 : Le graphique serait légèrement différent au niveau des moustaches car si Q1-1.5*IQR ou Q3+1.5*IQR correspondent à des valeurs non observées dans l'échantillon, alors les moustaches retiennent les valeurs minimum et maximum observées dans l'échantillon, ce qui est ma foi tout à fait raisonnable ! </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="résumer-avec-la-moyenne-et-lécart-type" class="level3" data-number="4.2.4">
 <h3 data-number="4.2.4" class="anchored" data-anchor-id="résumer-avec-la-moyenne-et-lécart-type"><span class="header-section-number">4.2.4</span> Résumer avec la moyenne et l’écart-type</h3>
 <p>Si on veut plutôt résumer une variable avec la moyenne et l’écart-type, on peut écrire, pour étudier l’âge en fonction du sexe :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>hdv2003 <span class="sc">|&gt;</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sexe) <span class="sc">|&gt;</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean=</span><span class="fu">wtd.mean</span>(age,<span class="at">weights=</span>poids,<span class="at">na.rm=</span>T),</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd=</span><span class="fu">sqrt</span>(<span class="fu">wtd.var</span>(age,<span class="at">weights=</span>poids,<span class="at">na.rm=</span>T))</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(mean<span class="sc">:</span>sd) <span class="sc">|&gt;</span> <span class="fu">pivot_wider</span>(<span class="at">names_from=</span>sexe,<span class="at">values_from=</span>value) <span class="sc">|&gt;</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">digits=</span><span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">kable_classic_2</span>(<span class="at">full_width=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>hdv2003 <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sexe) <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean=</span><span class="fu">wtd.mean</span>(age,<span class="at">weights=</span>poids,<span class="at">na.rm=</span>T),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd=</span><span class="fu">sqrt</span>(<span class="fu">wtd.var</span>(age,<span class="at">weights=</span>poids,<span class="at">na.rm=</span>T))</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(mean<span class="sc">:</span>sd) <span class="sc">|&gt;</span> <span class="fu">pivot_wider</span>(<span class="at">names_from=</span>sexe,<span class="at">values_from=</span>value) <span class="sc">|&gt;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">digits=</span><span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">kable_classic_2</span>(<span class="at">full_width=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="recoder-une-variable-quantitative-avec-les-quantiles-pondérés-et-regarder-sa-distribution" class="level3" data-number="4.2.5">
 <h3 data-number="4.2.5" class="anchored" data-anchor-id="recoder-une-variable-quantitative-avec-les-quantiles-pondérés-et-regarder-sa-distribution"><span class="header-section-number">4.2.5</span> Recoder une variable quantitative avec les quantiles pondérés et regarder sa distribution</h3>
 <p>Si on veut découper une variable quantitative en tranches de quantiles, il faut tenir compte de la pondération encore une fois. L’interface icut() de questionr ne permet pas de prendre en compte les quantiles pondérés. Ainsi, il faudra avoir recours à un recodage avec le code directement :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>hdv2003<span class="sc">$</span>age_rec <span class="ot">&lt;-</span> <span class="fu">cut</span>(hdv2003<span class="sc">$</span>age,</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">include.lowest =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">right =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">dig.lab =</span> <span class="dv">4</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">breaks =</span> <span class="fu">wtd.quantile</span>(hdv2003<span class="sc">$</span>age,<span class="at">weights=</span>hdv2003<span class="sc">$</span>poids,<span class="at">probs=</span><span class="fu">c</span>(<span class="dv">0</span>,.<span class="dv">25</span>,.<span class="dv">5</span>,.<span class="dv">75</span>,<span class="dv">1</span>),<span class="at">na.rm=</span>T)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>hdv2003<span class="sc">$</span>age_rec <span class="ot">&lt;-</span> <span class="fu">cut</span>(hdv2003<span class="sc">$</span>age,</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">include.lowest =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">right =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">dig.lab =</span> <span class="dv">4</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">breaks =</span> <span class="fu">wtd.quantile</span>(hdv2003<span class="sc">$</span>age,<span class="at">weights=</span>hdv2003<span class="sc">$</span>poids,<span class="at">probs=</span><span class="fu">c</span>(<span class="dv">0</span>,.<span class="dv">25</span>,.<span class="dv">5</span>,.<span class="dv">75</span>,<span class="dv">1</span>),<span class="at">na.rm=</span>T)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>On pourra ensuite vérifier la distribution des tranches d’âge avec les fonctions de questionr :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>hdv2003 <span class="sc">|&gt;</span> <span class="fu">freqtable</span>(age_rec,<span class="at">weights=</span>poids) <span class="sc">|&gt;</span> <span class="fu">freq</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>hdv2003 <span class="sc">|&gt;</span> <span class="fu">freqtable</span>(age_rec,<span class="at">weights=</span>poids) <span class="sc">|&gt;</span> <span class="fu">freq</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>La fonction freqtable() accepte bien une variable de pondération. À noter que les N des effectifs n’ont ici pas beaucoup de sens : ils correspondent à des effectifs pondérés.</p>
 </section>
@@ -458,33 +469,33 @@ Exercice
 <h3 data-number="4.2.6" class="anchored" data-anchor-id="la-corrélation-en-tenant-compte-de-la-pondération"><span class="header-section-number">4.2.6</span> La corrélation en tenant compte de la pondération</h3>
 <p>Le package <a href="https://nicolas-robette.github.io/descriptio/index.html">descriptio</a> de Nicolas Robette propose une fonction weighted.cor() qui permet de tenir compte de la pondération grâce à l’argument weights :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">weighted.cor</span>(hdv2003<span class="sc">$</span>age,hdv2003<span class="sc">$</span>heures.tv,<span class="at">weights=</span>hdv2003<span class="sc">$</span>poids,<span class="at">na.rm=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">weighted.cor</span>(hdv2003<span class="sc">$</span>age,hdv2003<span class="sc">$</span>heures.tv,<span class="at">weights=</span>hdv2003<span class="sc">$</span>poids,<span class="at">na.rm=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Pour calculer la corrélation pondérée sur des sous-groupes (en gardant le coefficient et la p-valeur) :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>hdv2003 <span class="sc">|&gt;</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">group_by</span>(sexe) <span class="sc">|&gt;</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">reframe</span>(</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">cor =</span> <span class="fu">weighted.cor</span>(age, heures.tv, <span class="at">weights =</span> poids,<span class="at">na.rm=</span>T)</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>hdv2003 <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">group_by</span>(sexe) <span class="sc">|&gt;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">reframe</span>(</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">cor =</span> <span class="fu">weighted.cor</span>(age, heures.tv, <span class="at">weights =</span> poids,<span class="at">na.rm=</span>T)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Pour une matrice des corrélations :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>hdv2003 <span class="sc">|&gt;</span> </span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(age,freres.soeurs,heures.tv) <span class="sc">|&gt;</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">weighted.cor2</span>(<span class="at">weights=</span>hdv2003<span class="sc">$</span>poids,<span class="at">na.rm=</span>T) <span class="sc">|&gt;</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>hdv2003 <span class="sc">|&gt;</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(age,freres.soeurs,heures.tv) <span class="sc">|&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">weighted.cor2</span>(<span class="at">weights=</span>hdv2003<span class="sc">$</span>poids,<span class="at">na.rm=</span>T) <span class="sc">|&gt;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="le-tableau-croisé-et-le-diagramme-à-barres-pondéré" class="level3" data-number="4.2.7">
 <h3 data-number="4.2.7" class="anchored" data-anchor-id="le-tableau-croisé-et-le-diagramme-à-barres-pondéré"><span class="header-section-number">4.2.7</span> Le tableau croisé et le diagramme à barres pondéré</h3>
 <p>Pour réaliser un tableau croisé sur données pondérées, rien de plus simple, il suffit d’ajouter l’argument weights à freqtable :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>hdv2003 <span class="sc">|&gt;</span> <span class="fu">freqtable</span>(nivetud,cinema,<span class="at">weights=</span>poids) <span class="sc">|&gt;</span> <span class="fu">rprop</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>hdv2003 <span class="sc">|&gt;</span> <span class="fu">freqtable</span>(nivetud,cinema,<span class="at">weights=</span>poids) <span class="sc">|&gt;</span> <span class="fu">rprop</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Si on veut ignorer la modalité NA :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>hdv2003 <span class="sc">|&gt;</span> <span class="fu">freqtable</span>(nivetud,cinema,<span class="at">weights=</span>poids,<span class="at">na.rm =</span> T) <span class="sc">|&gt;</span> <span class="fu">rprop</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>hdv2003 <span class="sc">|&gt;</span> <span class="fu">freqtable</span>(nivetud,cinema,<span class="at">weights=</span>poids,<span class="at">na.rm =</span> T) <span class="sc">|&gt;</span> <span class="fu">rprop</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled" title="Bonus">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
@@ -500,88 +511,88 @@ Bonus
 <div class="callout-body-container callout-body">
 <p>Pour créer un diagramme à barres de la proportion de “Oui” suivant le niveau d’études :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#D'abord, stocker le tableau croisé des % en ligne dans l'objet tab</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>tab <span class="ot">&lt;-</span> hdv2003 <span class="sc">|&gt;</span> </span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">freqtable</span>(nivetud, cinema, <span class="at">weights =</span> poids, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rprop</span>(<span class="at">total=</span>F) <span class="co">#ici on a indiqué qu'on ne souhaitait pas le total</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#On transforme notre tab en un objet tidy pour le ggplot: </span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>df_tab <span class="ot">&lt;-</span> <span class="fu">as.data.frame.matrix</span>(tab) <span class="sc">|&gt;</span> <span class="co">#cela permet de transformer la matrice en data frame</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">"nivetud"</span>) <span class="sc">|&gt;</span> <span class="co">#on remet le niveau d'études comme un nom de colonnes</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">nivetud=</span><span class="fu">factor</span>(nivetud,<span class="at">levels=</span><span class="fu">levels</span>(hdv2003<span class="sc">$</span>nivetud))) <span class="co">#cette manipulation permet de s'assurer qu'on va projeter les modalités du niveau d'éducation dans le bon ordre. </span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_tab, <span class="fu">aes</span>(<span class="at">x =</span> nivetud, <span class="at">y =</span> Oui)) <span class="sc">+</span> <span class="co">#les % sont stockés dans Oui. </span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span> </span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">sprintf</span>(<span class="st">"%0.f%%"</span>, Oui)),<span class="co">#On ajoute les labels au dessus de chaque barre</span></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.1</span>, <span class="at">size =</span> <span class="fl">3.5</span>) <span class="sc">+</span></span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">67</span>))<span class="sc">+</span> <span class="co">#On s'assure que les labels de % seront bien sur le graphique</span></span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()<span class="sc">+</span> <span class="co">#On inverse l'axe des x et des y. </span></span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  <span class="co">#On crée des jolis labels pour les axes </span></span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Niveau d'études"</span>,</span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Proportion (%)"</span>,</span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Sortie au cinéma selon le niveau d'études"</span></span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#D'abord, stocker le tableau croisé des % en ligne dans l'objet tab</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>tab <span class="ot">&lt;-</span> hdv2003 <span class="sc">|&gt;</span> </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">freqtable</span>(nivetud, cinema, <span class="at">weights =</span> poids, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rprop</span>(<span class="at">total=</span>F) <span class="co">#ici on a indiqué qu'on ne souhaitait pas le total</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">#On transforme notre tab en un objet tidy pour le ggplot: </span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>df_tab <span class="ot">&lt;-</span> <span class="fu">as.data.frame.matrix</span>(tab) <span class="sc">|&gt;</span> <span class="co">#cela permet de transformer la matrice en data frame</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">"nivetud"</span>) <span class="sc">|&gt;</span> <span class="co">#on remet le niveau d'études comme un nom de colonnes</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">nivetud=</span><span class="fu">factor</span>(nivetud,<span class="at">levels=</span><span class="fu">levels</span>(hdv2003<span class="sc">$</span>nivetud))) <span class="co">#cette manipulation permet de s'assurer qu'on va projeter les modalités du niveau d'éducation dans le bon ordre. </span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_tab, <span class="fu">aes</span>(<span class="at">x =</span> nivetud, <span class="at">y =</span> Oui)) <span class="sc">+</span> <span class="co">#les % sont stockés dans Oui. </span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span> </span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">sprintf</span>(<span class="st">"%0.f%%"</span>, Oui)),<span class="co">#On ajoute les labels au dessus de chaque barre</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.1</span>, <span class="at">size =</span> <span class="fl">3.5</span>) <span class="sc">+</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">67</span>))<span class="sc">+</span> <span class="co">#On s'assure que les labels de % seront bien sur le graphique</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()<span class="sc">+</span> <span class="co">#On inverse l'axe des x et des y. </span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>  <span class="co">#On crée des jolis labels pour les axes </span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Niveau d'études"</span>,</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Proportion (%)"</span>,</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Sortie au cinéma selon le niveau d'études"</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Sur un tableau croisé où il y a plus de deux colonnes, les commandes pour obtenir le tableau croisé sont les mêmes :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>hdv2003 <span class="sc">|&gt;</span> </span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">freqtable</span>(age_rec, occup, <span class="at">weights =</span> poids, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rprop</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>hdv2003 <span class="sc">|&gt;</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">freqtable</span>(age_rec, occup, <span class="at">weights =</span> poids, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rprop</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Pour construire un graphique avec ggplot, c’est un peu plus compliqué :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">&lt;-</span>hdv2003 <span class="sc">|&gt;</span> </span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">freqtable</span>(age_rec, occup, <span class="at">weights =</span> poids, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rprop</span>(<span class="at">total=</span>F)</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>df_tab <span class="ot">&lt;-</span> <span class="fu">as.data.frame.matrix</span>(tab) <span class="sc">|&gt;</span> </span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">"age_rec"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#il faut remettre tous les pourcentages dans une seule colonne pour ggplot</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>age_rec,<span class="at">names_to=</span><span class="st">"occup"</span>,<span class="at">values_to=</span><span class="st">"prop"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age_rec=</span><span class="fu">factor</span>(age_rec,<span class="at">levels=</span><span class="fu">levels</span>(hdv2003<span class="sc">$</span>age_rec)),</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">occup=</span><span class="fu">factor</span>(occup,<span class="at">levels=</span><span class="fu">levels</span>(hdv2003<span class="sc">$</span>occup))</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_tab, <span class="fu">aes</span>(<span class="at">x =</span> age_rec, <span class="at">y =</span> prop, <span class="at">fill=</span>occup)) <span class="sc">+</span></span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>,<span class="at">position=</span><span class="st">"stack"</span>) <span class="sc">+</span> </span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>  <span class="co">#on ajoute des labels qui ne seront montrés que s'ils sont supérieurs à 5%</span></span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(</span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">ifelse</span>(prop <span class="sc">&gt;</span> <span class="dv">5</span>, <span class="fu">sprintf</span>(<span class="st">"%0.0f%%"</span>, prop), <span class="st">""</span>)),</span>
-<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>),</span>
-<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"white"</span>,</span>
-<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">3</span></span>
-<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>  <span class="co">#On a choisi une palette de couleurs</span></span>
-<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette=</span><span class="st">"Dark2"</span>)<span class="sc">+</span></span>
-<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()<span class="sc">+</span></span>
-<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Âge"</span>,</span>
-<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Proportion (%)"</span>,</span>
-<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill=</span><span class="st">"Statut d'occupation"</span></span>
-<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()<span class="sc">+</span></span>
-<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">&lt;-</span>hdv2003 <span class="sc">|&gt;</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">freqtable</span>(age_rec, occup, <span class="at">weights =</span> poids, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rprop</span>(<span class="at">total=</span>F)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>df_tab <span class="ot">&lt;-</span> <span class="fu">as.data.frame.matrix</span>(tab) <span class="sc">|&gt;</span> </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">"age_rec"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#il faut remettre tous les pourcentages dans une seule colonne pour ggplot</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>age_rec,<span class="at">names_to=</span><span class="st">"occup"</span>,<span class="at">values_to=</span><span class="st">"prop"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age_rec=</span><span class="fu">factor</span>(age_rec,<span class="at">levels=</span><span class="fu">levels</span>(hdv2003<span class="sc">$</span>age_rec)),</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">occup=</span><span class="fu">factor</span>(occup,<span class="at">levels=</span><span class="fu">levels</span>(hdv2003<span class="sc">$</span>occup))</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_tab, <span class="fu">aes</span>(<span class="at">x =</span> age_rec, <span class="at">y =</span> prop, <span class="at">fill=</span>occup)) <span class="sc">+</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>,<span class="at">position=</span><span class="st">"stack"</span>) <span class="sc">+</span> </span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  <span class="co">#on ajoute des labels qui ne seront montrés que s'ils sont supérieurs à 5%</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">ifelse</span>(prop <span class="sc">&gt;</span> <span class="dv">5</span>, <span class="fu">sprintf</span>(<span class="st">"%0.0f%%"</span>, prop), <span class="st">""</span>)),</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"white"</span>,</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">3</span></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>  <span class="co">#On a choisi une palette de couleurs</span></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette=</span><span class="st">"Dark2"</span>)<span class="sc">+</span></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()<span class="sc">+</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Âge"</span>,</span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Proportion (%)"</span>,</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill=</span><span class="st">"Statut d'occupation"</span></span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()<span class="sc">+</span></span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Pour le diagramme à barres adjacents :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_tab, <span class="fu">aes</span>(<span class="at">x =</span> occup, <span class="at">y =</span> prop, <span class="at">fill=</span>age_rec)) <span class="sc">+</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>,<span class="at">position=</span><span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.9</span>)) <span class="sc">+</span> </span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">sprintf</span>(<span class="st">"%0.0f%%"</span>, prop)),</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.9</span>),</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">vjust=</span><span class="sc">-</span>.<span class="dv">5</span>,</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"black"</span>,</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">3</span></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette=</span><span class="st">"Oranges"</span>)<span class="sc">+</span></span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Statut d'occupation"</span>,</span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Proportion (%)"</span>,</span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill=</span><span class="st">"Âge"</span></span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()<span class="sc">+</span></span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_tab, <span class="fu">aes</span>(<span class="at">x =</span> occup, <span class="at">y =</span> prop, <span class="at">fill=</span>age_rec)) <span class="sc">+</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>,<span class="at">position=</span><span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.9</span>)) <span class="sc">+</span> </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">sprintf</span>(<span class="st">"%0.0f%%"</span>, prop)),</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.9</span>),</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">vjust=</span><span class="sc">-</span>.<span class="dv">5</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"black"</span>,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">3</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette=</span><span class="st">"Oranges"</span>)<span class="sc">+</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Statut d'occupation"</span>,</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Proportion (%)"</span>,</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill=</span><span class="st">"Âge"</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()<span class="sc">+</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -589,16 +600,25 @@ Bonus
 </section>
 <section id="le-test-du-chi-deux-et-le-v-de-cramer-avec-pondération" class="level3" data-number="4.2.8">
 <h3 data-number="4.2.8" class="anchored" data-anchor-id="le-test-du-chi-deux-et-le-v-de-cramer-avec-pondération"><span class="header-section-number">4.2.8</span> Le test du chi-deux et le V de Cramer avec pondération</h3>
-<p>Le test du chi-deux est sensible à la taille de l’échantillon. Or si on crée simplement un tableau des effectifs pondérés, on “grossit” artificiellement la taille de l’échantillon en utilisant chisq.test. On pourra avoir recours à la fonction assoc.twocat() dans le package descriptio qui rassemble de nombreuses mesures d’association entre deux variables catégorielles. À noter que le test du chi-2 est réalisé à partir d’un “<a href="https://nicolas-robette.github.io/GDAtools/articles/french/Tutoriel_descr.html">test de permutation</a>” (plutôt qu’un test fréquentiste, il faut donc choisir un nombre de permutations avec l’argument nperm, ici 100 mais choisir plutôt 1000).</p>
+<p>Le test du chi-deux est sensible à la taille de l’échantillon. Or si on crée simplement un tableau des effectifs pondérés, on “grossit” artificiellement la taille de l’échantillon en utilisant chisq.test.</p>
+<p>On pourra avoir recours à la fonction assoc.twocat() dans le package descriptio qui rassemble de nombreuses mesures d’association entre deux variables catégorielles.</p>
+<ul>
+<li><p>À noter que le test du chi-2 est ici réalisé à partir d’un “<a href="https://nicolas-robette.github.io/GDAtools/articles/french/Tutoriel_descr.html">test de permutation</a>” (plutôt qu’un test fréquentiste, il faut donc choisir un nombre de permutations avec l’argument nperm, ici 100 mais choisir plutôt 1000).</p></li>
+<li><p>À noter également que dans la fonction il est conseillé d’utiliser des poids “normalisés” à la taille de l’échantillon (c’est-à-dire dont la somme est égale au nombre d’individus enquêtés) pour ne pas distordre le calcul du chi-2.</p></li>
+</ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>tri<span class="ot">&lt;-</span><span class="fu">assoc.twocat</span>(hdv2003<span class="sc">$</span>age_rec,hdv2003<span class="sc">$</span>occup, <span class="at">weights=</span>hdv2003<span class="sc">$</span>poids,<span class="at">nperm=</span><span class="dv">100</span>,<span class="at">na.rm=</span>T)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>tri<span class="sc">$</span>global<span class="sc">$</span>permutation.pvalue</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>hdv2003<span class="sc">$</span>poidsn<span class="ot">&lt;-</span> <span class="fu">length</span>(hdv2003<span class="sc">$</span>poids) <span class="sc">*</span> hdv2003<span class="sc">$</span>poids <span class="sc">/</span> <span class="fu">sum</span>(hdv2003<span class="sc">$</span>poids)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(hdv2003<span class="sc">$</span>poidsn)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>tri<span class="ot">&lt;-</span><span class="fu">assoc.twocat</span>(hdv2003<span class="sc">$</span>age_rec,hdv2003<span class="sc">$</span>occup, <span class="at">weights=</span>hdv2003<span class="sc">$</span>poidsn,<span class="at">nperm=</span><span class="dv">100</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>tri<span class="sc">$</span>global<span class="sc">$</span>chi.squared</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>tri<span class="sc">$</span>global<span class="sc">$</span>permutation.pvalue</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Pour obtenir le V de Cramer :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>tri<span class="sc">$</span>global<span class="sc">$</span>cramer.v</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">weighted.cramer</span>(hdv2003<span class="sc">$</span>age_rec, hdv2003<span class="sc">$</span>occup, <span class="at">weights =</span> hdv2003<span class="sc">$</span>poids)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Ou simplement : </span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>tri<span class="sc">$</span>global<span class="sc">$</span>cramer.v</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>À noter qu’il est ici exprimé en pourcentage (et varie donc entre 0 et 100 plutôt que 0 et 1).</p>
 </section>
 </section>
 <section id="exercices" class="level2" data-number="4.3">

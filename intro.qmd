@@ -11,7 +11,7 @@ Si pour une raison ou une autre, il n'est pas possible d'installer R / RStudio s
 Une fois qu'on a installé R et RStudio, on peut directement ouvrir RStudio qui va afficher une jolie console (à l'exception qu'ici, j'ai déjà créé un script R en cliquant sur la petite flèche blanche sur fond vert que j'ai enregistré dans sous le nom 1Intro.R, ce que vous devez faire également).
 
 ::: {.callout-note title="Exercice" icon="false"}
--    Ouvrir RStudio et créer un créer un script vide.
+-   Ouvrir RStudio et créer un créer un script vide.
 
 -   Enregistrer ce script dans un dossier (par exemple "Formation R") en le nommant par exemple 1Intro.R.
 :::
@@ -62,7 +62,18 @@ Vérifier que le package tidyverse est bien installé et chargé dans la session
 ![La console de RStudio](images/clipboard-343351687.png)
 
 ::: callout-caution
-Au moment de quitter RStudio, il est possible qu'une fenêtre apparaisse demandant si on veut "Save the workspace image...". Et en fait ce n'est pas une bonne idée de cliquer sur Save ! Car cela enregistre l'ensemble de l'espace de travail (la session) qui sera réouverte automatiquement en réouvrant RStudio, et on peut se retrouver avec des objets non pertinents pour une session ultérieure (et qui peuvent se retrouver en conflit les uns avec les autres). On poura suivre Julien Barnier qui propose de désactiver l'apparition de cette fenêtre pop-up : <https://juba.github.io/tidyverse/05-organiser.html#d%C3%A9sactiver-la-sauvegarde-de-lespace-de-travail>.
+-   Au moment de quitter RStudio, il est possible qu'une fenêtre apparaisse demandant si on veut "Save the workspace image...". Et en fait ce n'est pas une bonne idée de cliquer sur Save !
+
+-   Car cela enregistre l'ensemble de l'espace de travail (la session) qui sera réouverte automatiquement en réouvrant RStudio, et on peut se retrouver avec des objets non pertinents pour une session ultérieure (et qui peuvent se retrouver en conflit les uns avec les autres).
+
+-   On poura suivre Julien Barnier qui propose de désactiver l'apparition de cette fenêtre pop-up : <https://juba.github.io/tidyverse/05-organiser.html#d%C3%A9sactiver-la-sauvegarde-de-lespace-de-travail>.
+
+-   Si on n'a pas cliqué sur Save, une réouverture de RStudio réinitialise la session R. Pour être sur que c'est bien le cas (vider le global environment, les packages chargés, réinitialise la mémoire...), on pourra écrire dans la console :
+
+```{r}
+#| eval: false
+.rs.restartR()
+```
 :::
 
 ## Charger des données dans R

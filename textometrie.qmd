@@ -13,7 +13,7 @@ Un tutoriel de la manipulation des données textuelles dans R est également pr�
 
 -   Enregistrer ce script dans un dossier (par exemple "Formation R") en le nommant par exemple 7textometrie.R.
 
--   Installer/Charger les packages suivants : tidyverse, questionr, kableExtra, esquisse, FactoMineR, explor, factoextra, rainette, quanteda, quanteda.textstats, quanteda.textplots et rainette.
+-   Installer/Charger les packages suivants : tidyverse, questionr, kableExtra, esquisse, FactoMineR, explor, factoextra, rainette, quanteda, quanteda.textstats, quanteda.textplots.
 
 -   Charger la base de données dans un objet nommé textes (voir chapitre 1 - Introduction pour ce faire).
 

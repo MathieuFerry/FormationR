@@ -1,0 +1,17 @@
+# Préface {.unnumbered}
+
+Ce petit guide synthétise les éléments d'apprentissage proposés lors de la Formation R du 10 et 11 juin 2025 organisée par la Graduate School de Sciences sociales de l'Université Paris-Saclay.
+
+Les différents tutoriels visent à appréhender la console RStudio, le langage R (et le "tidyverse") à travers quelques fonctions et outils considérés comme les plus pertinents pour qui manipule des données statistiques en sciences sociales.
+
+Support de formation à R, ce guide n'est pas une formation aux statistiques et on suppose que les notions statistiques de base sont connues pour appréhender cette formation. Il n'a pas non plus vocation à se substituer aux nombreux et excellents guides existants, dont on peut ici mentionner quelques uns :
+
+-   [guide-R](https://larmarange.github.io/guide-R/)
+
+-   [Introduction à R et au tidyverse](https://juba.github.io/tidyverse/)
+
+-   [analyse-R](https://larmarange.github.io/analyse-R/)
+
+-   [utilitR](https://utilitr.org/)
+
+-   [R for data science](https://r4ds.hadley.nz/)

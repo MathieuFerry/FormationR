@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Formation R - 8&nbsp; Quelques outils textométriques dans R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./corpus.html" rel="prev">
+<link href="./images/icon.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./corpus.html"><strong>Analyse statistique textuelle</strong></a></li><li class="breadcrumb-item"><a href="./textometrie.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Quelques outils textométriques dans R</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./images/icon.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Formation R</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Formation-R.pdf" rel="" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Préface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text"><strong>À la découverte de R</strong></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text"><strong>Manipuler et analyser ses données</strong></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./statunis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistiques univariées et recodages des variables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./statbis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Statistiques bivariées et graphiques</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text"><strong>Approfondissements</strong></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./donneespond.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Les données de sondage, des données pondérées</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./statsmultis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Les relations multivariées entre variables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./syntaxe.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Organisation du code et manipulations avancées</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text"><strong>Analyse statistique textuelle</strong></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./corpus.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Créer un corpus à partir d’Europresse</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./textometrie.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Quelques outils textométriques dans R</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#lexploration-du-corpus" id="toc-lexploration-du-corpus" class="nav-link active" data-scroll-target="#lexploration-du-corpus"><span class="header-section-number">8.1</span> L’exploration du corpus</a></li>
+  <li><a href="#le-nettoyage-des-données" id="toc-le-nettoyage-des-données" class="nav-link" data-scroll-target="#le-nettoyage-des-données"><span class="header-section-number">8.2</span> Le nettoyage des données</a></li>
+  <li><a href="#le-nuage-de-mots" id="toc-le-nuage-de-mots" class="nav-link" data-scroll-target="#le-nuage-de-mots"><span class="header-section-number">8.3</span> Le nuage de mots</a></li>
+  <li><a href="#lanalyse-factorielle-des-correspondances" id="toc-lanalyse-factorielle-des-correspondances" class="nav-link" data-scroll-target="#lanalyse-factorielle-des-correspondances"><span class="header-section-number">8.4</span> L’Analyse Factorielle des Correspondances</a></li>
+  <li><a href="#la-classification-de-max-reinert" id="toc-la-classification-de-max-reinert" class="nav-link" data-scroll-target="#la-classification-de-max-reinert"><span class="header-section-number">8.5</span> La classification de Max Reinert</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Quelques outils textométriques dans R</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Ce chapitre propose une brève introduction à l’analyse d’un corpus de textes, ici constitué a priori d’articles collectés sur Europresse (voir chapitre précédent).</p>
+<p>Si on n’a pas de corpus, on peut utiliser un <a href="./Data/base_de_donnees2025-04-26_wokisme.xlsx">corpus</a> utilisé pour l’exemple ici portant sur l’utilisation du terme “wokisme” dans les médias de la presse nationale.</p>
+<p>À noter que la plupart des opérations présentées ici peuvent aussi être réaliser avec une application “clic-bouton” appelée Mendak et disponible <a href="https://analytics.huma-num.fr/Mathieu.Ferry/mendak/">ici</a> ou <a href="https://shiny.ens-paris-saclay.fr/app/mendak">ici</a> (préférer a priori le deuxième lien : pour comprendre comment fonctionne Mendak - et l’analyse statistique textuelle surtout -, on pourra se reporter à ce <a href="https://mathieuferry.github.io/Tutorials-for-Mendak/TutorielFR.html">tutoriel</a>).</p>
+<p>Un tutoriel de la manipulation des données textuelles dans R est également présenté en anglais <a href="https://mathieuferry.github.io/PondicherryWorkshop/">ici</a>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercice">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><p>Créer un script vide.</p></li>
+<li><p>Enregistrer ce script dans un dossier (par exemple “Formation R”) en le nommant par exemple 7textometrie.R.</p></li>
+<li><p>Installer/Charger les packages suivants : tidyverse, questionr, kableExtra, esquisse, FactoMineR, explor, factoextra, rainette, quanteda, quanteda.textstats, quanteda.textplots et rainette.</p></li>
+<li><p>Charger la base de données dans un objet nommé textes (voir chapitre 1 - Introduction pour ce faire).</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># On liste les packages dont on a besoin dans un vecteur nommé load.lib. </span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>load.lib <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"openxlsx"</span>,<span class="st">"tidyverse"</span>, <span class="st">"questionr"</span>, <span class="st">"kableExtra"</span>, <span class="st">"esquisse"</span>, <span class="st">"FactoMineR"</span>, <span class="st">"explor"</span>,<span class="st">"factoextra"</span>, <span class="st">"rainette"</span>, <span class="st">"quanteda"</span>, <span class="st">"quanteda.textstats"</span>, <span class="st">"quanteda.textplots"</span>,<span class="st">"rainette"</span>) </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>install.lib <span class="ot">&lt;-</span> load.lib[<span class="sc">!</span>load.lib <span class="sc">%in%</span> <span class="fu">installed.packages</span>()] <span class="co"># On regarde les paquets qui ne sont pas installés</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (lib <span class="cf">in</span> install.lib) <span class="fu">install.packages</span>(lib,<span class="at">dependencies=</span><span class="cn">TRUE</span>) <span class="co"># On installe ceux-ci</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(load.lib,require,<span class="at">character=</span><span class="cn">TRUE</span>) <span class="co"># Et on charge tous les paquets </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+<section id="lexploration-du-corpus" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="lexploration-du-corpus"><span class="header-section-number">8.1</span> L’exploration du corpus</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercice">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><p>Commencer par décrire la base de données.</p></li>
+<li><p>Puis, réaliser des tris à plat des variables NomSource, TypeSource, PaysSource, PeriodiciteSource, LangueSource.</p></li>
+<li><p>Si certains textes du corpus ne sont pas français, créer un textes2 où on retire les textes correspondants.</p></li>
+</ul>
+</div>
+</div>
+<p>Pour étudier la date de publication des articles, on dispose de la variable Date : “03 mai 2024”, “26 avril 2023”… soit un format JJ mois AAAA, ce qu’on peut indiquer à R en utilisant le format “Date” :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#ATTENTION, pour que la fonction suivante fonctionne il va peut-être falloir préciser qu'on est en français : </span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#- sur mac ou linux</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.setlocale</span>(<span class="st">"LC_TIME"</span>, <span class="st">"fr_FR.UTF-8"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#- sur windows</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.setlocale</span>(<span class="st">"LC_TIME"</span>, <span class="st">"French_France.1252"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Conversion des dates en format Date</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>textes<span class="sc">$</span>Date_propre <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(textes<span class="sc">$</span>Date, <span class="at">format =</span> <span class="st">"%d %B %Y"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#Si on veut par exemple extraire juste l'année : </span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Extraire l'année</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>textes<span class="sc">$</span>Annee <span class="ot">&lt;-</span> <span class="fu">format</span>(textes<span class="sc">$</span>Date_propre, <span class="st">"%Y"</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#Une autre alternative pour extraire l'année à partir de Date est d'utiliser str_extract avec stringr (dans tidyverse)</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>textes<span class="sc">$</span>Annee <span class="ot">&lt;-</span> <span class="fu">str_extract</span>(textes<span class="sc">$</span>Date, <span class="st">"[0-9]{4}$"</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># "[0-9]{4}$" = extrais 4 chiffres entre 0 et 9 en fin de chaine. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercice">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Avec esquisse, étudier la distribution de parution des articles suivant la date de parution. La distribution est-elle différente suivant le titre de presse ?</p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">esquisser</span>(textes)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(textes) <span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> Date_propre) <span class="sc">+</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> 30L, <span class="at">fill =</span> <span class="st">"#000000"</span>) <span class="sc">+</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Période"</span>, <span class="at">y =</span> <span class="st">"Nombre d'articles"</span>) <span class="sc">+</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L),</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L),</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 14L),</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L),</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L),</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L) <span class="co">#Augmenter taille des labels des facets</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="fu">vars</span>(NomSource))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1544123100.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Distribution des articles suivant la période par titre de presse</figcaption>
+</figure>
+</div>
+<p>On va créer une variable de comptage du nombre de mots dans le corps de textes des articles. La première étape est de transformer la colonne correspondante en format “corpus” avec le package quanteda :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#On s'assure que tous les types d'apostrophes sont bien remplacés par des espaces,</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Car quanteda le gère assez mal</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>textes<span class="sc">$</span>Textec <span class="ot">=</span> <span class="fu">str_replace_all</span>(textes<span class="sc">$</span>Texte, <span class="st">"[‘’´`ʻʼʽʾʿˊˋ˘˙’']"</span>, <span class="st">" "</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">corpus</span>(sample<span class="sc">$</span>Desc_family)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Le corpus est un ensemble de textes — ici, les 938 corps de textes des articles.</p>
+<p>À partir de cet objet, on peut créer des “ tokens ”, c’est-à-dire les mots contenus dans les textes. Ce processus s’accompagne d’un léger nettoyage en vue de l’analyse :</p>
+<ul>
+<li><p>On supprime la ponctuation (points, virgules, etc.) ainsi que les symboles (par exemple : * $ €…) afin d’éviter de les considérer comme des mots.</p></li>
+<li><p>On supprime aussi les nombres écrits en chiffres (et non en toutes lettres). Un autre choix aurait pu être fait, mais il me semble raisonnable de les exclure ici.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>tok <span class="ot">&lt;-</span> <span class="fu">tokens</span>(corpus, <span class="at">remove_punct =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">remove_symbols=</span><span class="cn">TRUE</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">remove_numbers =</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>On peut ainsi créer une variable du nombre de mots par corps d’articles dans la base :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>textes<span class="sc">$</span>nmots <span class="ot">&lt;-</span> <span class="fu">ntoken</span>(tok)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercice">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>La distribution du nombre de mots varie-t-elle suivant le titre de presse ?</p>
+</div>
+</div>
+</section>
+<section id="le-nettoyage-des-données" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="le-nettoyage-des-données"><span class="header-section-number">8.2</span> Le nettoyage des données</h2>
+<p>On retire un certain nombre de “mots vides ” (stop words) de l’analyse. Il s’agit de mots ou expressions très fréquents en français, qui apportent peu d’information sur le contenu des textes. Leur suppression permet de faire ressortir les éléments lexicaux réellement caractéristiques.</p>
+<p>On utilise pour cela une liste proposée par <a href="https://github.com/gillesbastin/french_stopwords">Gilles Bastin</a> qu’on va télécharger (ça permet de voir qu’il est possible de charger directement un fichier avec un url dans R !) :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>stopwords_url <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/gillesbastin/french_stopwords/main/french_stopwords.csv"</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>stop_fr <span class="ot">&lt;-</span> <span class="fu">read_csv2</span>(stopwords_url)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>On peut aussi enlever les mots liés à notre recherche sur le wokisme. En effet, l’idée n’est pas de se concentrer sur la présence du terme « wokisme » lui-même ou de ses variantes, mais plutôt sur ce qui est dit <em>à propos</em> du wokisme — c’est-à-dire les jugements, qualificatifs, oppositions, cadrages ou champs sémantiques associés</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mot_woke<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"wokisme"</span>,<span class="st">"woke"</span>,<span class="st">"wokiste"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>tok <span class="ot">&lt;-</span> <span class="fu">tokens_remove</span>(tok,<span class="fu">c</span>(stop_fr<span class="sc">$</span>token,mot_woke))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>On crée ensuite une “matrice de mots” (une document-feature matrix) :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Create document-feature matrix (keep in lower case)</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>dtm <span class="ot">&lt;-</span> <span class="fu">dfm</span>(tok, <span class="at">tolower =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>dtm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La matrice comprend en ligne les textes et en colonnes les mots du corpus. Chaque cellule indique le nombre de fois qu’un mot apparait dans le texte correspondant.</p>
+<p>Arbitrairement, ce peut être une bonne idée de ne pas garder les mots trop rares (mettons au moins ceux qui ne sont présents qu’une seule fois). Ici, je garde même ceux qui sont présents plus de 5 fois au total sur l’ensemble du corpus.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dtm <span class="ot">&lt;-</span> <span class="fu">dfm_trim</span>(dtm, <span class="at">min_docfreq =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="le-nuage-de-mots" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="le-nuage-de-mots"><span class="header-section-number">8.3</span> Le nuage de mots</h2>
+<p>Après tout ce travail de préparation, on peut passer à une première analyse exploratoire ! Commençons simplement par afficher un nuage de mots dans lequel la taille des mots est proportionnelle à leur fréquence dans le corpus.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">textplot_wordcloud</span>(dtm, <span class="at">random_order =</span> F, <span class="at">rotation =</span> <span class="fl">0.25</span>,<span class="at">min_size =</span><span class="dv">1</span>,<span class="at">max_words =</span> <span class="dv">100</span>,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color =</span> RColorBrewer<span class="sc">::</span><span class="fu">brewer.pal</span>(<span class="dv">8</span>, <span class="st">"Dark2"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-4132083259.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Nuage de mots du corpus nettoyé</figcaption>
+</figure>
+</div>
+</section>
+<section id="lanalyse-factorielle-des-correspondances" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="lanalyse-factorielle-des-correspondances"><span class="header-section-number">8.4</span> L’Analyse Factorielle des Correspondances</h2>
+<p>La matrice de mots se prête assez bien à une Analyse Factorielle des Correspondances (AFC), en considérant la matrice comme un tableau de contingence.</p>
+<p>Il s’agit ici de mener une analyse exploratoire des principales associations récurrentes dans le corpus entre les mots, et si ces associations font ressortir des champs thématiques spécifiques, eux-mêmes associés à des journaux, des dates, des journalistes…</p>
+<p>Pour simplifier encore plus et faire en sorte que l’analyse ne prenne pas trop de temps à tourner, je ne garde ici que les mots qui sont présents au moins 20 fois dans le corpus (3605 mots tout de même, et autant de colonnes dans l’analyse, et ensuite de points sur un graphique !).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#On ne garde que les termes mentionnés au moins 20 x ... !</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>dtm_reduc <span class="ot">&lt;-</span> <span class="fu">dfm_trim</span>(dtm, <span class="at">min_docfreq =</span> <span class="dv">20</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#On convertit la matrice en un data frame</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>dtm_pour_afc <span class="ot">&lt;-</span> <span class="fu">convert</span>(dtm_reduc, <span class="at">to =</span> <span class="st">"data.frame"</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#On enlève la colonne doc_id, convertie en rownames</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(dtm_pour_afc) <span class="ot">&lt;-</span> dtm_pour_afc<span class="sc">$</span>doc_id</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>dtm_pour_afc<span class="sc">$</span>doc_id <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">#On ajoute trois colonnes de métadonnées sur les textes</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>dtm_pour_afc<span class="ot">&lt;-</span><span class="fu">cbind</span>(<span class="at">NomSource=</span>textes<span class="sc">$</span>NomSource,<span class="at">Annee=</span>textes<span class="sc">$</span>Annee,dtm_pour_afc)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>ca<span class="ot">&lt;-</span><span class="fu">CA</span>(dtm_pour_afc,<span class="at">graph=</span>F,<span class="at">quali.sup=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>On pourra éventuellement examiner l’éboulis des valeurs propres des axes, dénotant ainsi quelle part de l’information de la matrice est exprimée sur chacun des axes (on pourra n’analyser que les premiers axes, avant une coupure dans le diagramme à barres des valeurs propres).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_eig</span>(ca,<span class="at">ncp=</span><span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Pour visualiser les mots sur le premier plan factoriel, il va être difficile de tous les projeter. Il est possible de ne privilégier que les 100 ou 200 mots qui contribuent le plus à ce plan factoriel :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_ca_col</span>(ca,<span class="at">select.col=</span><span class="fu">list</span>(<span class="at">contrib=</span><span class="dv">200</span>),<span class="at">axes =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">repel =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2259770203.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">200 mots les plus contributeurs sur le premier plan factoriel</figcaption>
+</figure>
+</div>
+<p>Clairement, le premier axe (horizontal) oppose des articles portant à gauche sur les États-Unis (et l’international) et à droite la France. Le second axe distingue surtout les articles sur la France entre en haut des articles sur l’institution scolaire / universitaire et en bas des articles sur le champ politique à proprement parler (cérémonie renvoie en fait aux jeux olympiques…).</p>
+<p>Ces champs thématiques sont-ils associés à des journaux / années ? Malheureusement il n’y pas de fonction clef en main pour représenter les variables catégorielles supplémentaires dans le cadre du AFC avec factoextra…</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>quali_coord <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(ca<span class="sc">$</span>quali.sup<span class="sc">$</span>coord)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>quali_coord<span class="sc">$</span>mod <span class="ot">&lt;-</span> <span class="fu">rownames</span>(quali_coord)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>quali_coord<span class="sc">$</span>mod <span class="ot">&lt;-</span> <span class="fu">str_remove</span>(quali_coord<span class="sc">$</span>mod, <span class="st">"^[^</span><span class="sc">\\</span><span class="st">.]+</span><span class="sc">\\</span><span class="st">."</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(quali_coord, <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">Dim 1</span><span class="st">`</span>, <span class="at">y =</span> <span class="st">`</span><span class="at">Dim 2</span><span class="st">`</span>, <span class="at">label =</span> mod)) <span class="sc">+</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>)<span class="sc">+</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>)<span class="sc">+</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Modalités des variables qualitatives supplémentaires"</span>,</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Dimension 1"</span>, <span class="at">y =</span> <span class="st">"Dimension 2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>On repère quand même que les articles sur les Etats-Unis sont plus associés à la presse économique, contre la presse généraliste et les titres de presse connotés dans le champ politique associés à des articles sur la France.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-4141045360.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Titre et année sur le premier plan factoriel</figcaption>
+</figure>
+</div>
+</section>
+<section id="la-classification-de-max-reinert" class="level2" data-number="8.5">
+<h2 data-number="8.5" class="anchored" data-anchor-id="la-classification-de-max-reinert"><span class="header-section-number">8.5</span> La classification de Max Reinert</h2>
+<p>On mobilise ici le package <a href="https://juba.github.io/rainette/index.html">rainette</a> créé par Julien Barnier qui reprend la méthode de classification de Max Reinert présentée dans Alceste et dans Iramuteq.</p>
+<p>À partir de la matrice document-terme, on utilise la distance du khi-deux pour mesurer les similarités et différences entre les descriptions de familles.</p>
+<p>La méthode repose sur un algorithme de classification hiérarchique descendante, que l’on peut décrire ainsi :</p>
+<ul>
+<li><p>On commence par diviser les documents en deux groupes, de manière à ce qu’ils soient aussi différents que possible. Cette différence repose sur le fait que certains mots (tokens) sont fréquemment mentionnés dans un groupe et rarement dans l’autre, et inversement.</p></li>
+<li><p>Parmi les deux groupes obtenus, on identifie le plus grand, que l’on divise à nouveau en deux sous-groupes.</p></li>
+<li><p>Parmi les trois groupes ainsi créés, on divise à nouveau le plus grand, ce qui donne quatre groupes.</p></li>
+<li><p>Et ainsi de suite…</p></li>
+</ul>
+<p>Une description plus complète et rigoureuse de l’algorithme est disponible <a href="https://juba.github.io/rainette/articles/introduction_usage.html">ici</a>.</p>
+<p>Cette étape est réalisée en exécutant la commande R suivante (ici, on demande à l’algorithme de créer jusqu’à dix groupes de documents) :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">rainette</span>(dtm, <span class="at">k =</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Combien de groupes ou de clusters de documents faut-il conserver dans la partition finale ?</p>
+<p>Il s’agit ici d’un outil exploratoire, donc la meilleure approche consiste à examiner d’abord la partition en deux groupes, puis celle en trois groupes, etc.</p>
+<p>À chaque étape, on interprète la nouvelle distinction qui émerge avec l’ajout d’un cluster.</p>
+<ul>
+<li><p>On conserve autant de groupes qu’on est capable d’interpréter.</p></li>
+<li><p>L’objectif est de comprendre les distinctions dans le corpus : trop de clusters nuisent à la lisibilité de l’analyse.</p></li>
+<li><p>En pratique, au-delà de 8 à 10 clusters, la classification devient souvent peu informative, car il devient difficile de saisir d’un coup d’œil les différences entre les groupes.</p></li>
+</ul>
+<p>L’exploration concrète des clusters de documents et des mots (tokens) qui les structurent est réalisée grâce à une application Shiny très pratique :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rainette_explor</span>(res, dtm, corpus)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3433277221.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Interface de l’explorateur de classification de rainette</figcaption>
+</figure>
+</div>
+<p>Chaque cluster est caractérisé par ses tokens les plus spécifiques, c’est-à-dire, en simplifiant, les mots qui sont souvent mentionnés dans un cluster mais peu présents dans les autres.</p>
+<p>Comme il peut être difficile d’interpréter directement la spécificité de chaque cluster, il est utile de revenir aux descriptions textuelles pour voir comment ces termes spécifiques sont utilisés dans les phrases.</p>
+<p>Dans le coin inférieur droit du panneau de l’application Shiny, cliquer sur “Documents du cluster” pour explorer ces occurrences.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2611334508.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Recherche des termes dans les documents</figcaption>
+</figure>
+</div>
+<p>Les clusters obtenus sont-ils associés à certains journaux / période de parution ?</p>
+<p>Pour le savoir ajoutons une variable de cluster à la base de données :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>textes<span class="sc">$</span>cluster <span class="ot">&lt;-</span> <span class="fu">cutree</span>(res, <span class="at">k =</span> <span class="dv">6</span>) <span class="co">#Ou remplacer 6 par le nombre de clusters finalement retenu</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercice">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Renommer les clusters avec des labels explicites.</li>
+<li>Proposer des traitements statistiques permettant d’analyser le lien entre les champs thématiques et les caractéristiques du corpus.</li>
+</ol>
+</div>
+</div>
+<p>Note : normalement la méthode Reinert de classification s’applique à des segments de texte courts, et non à des textes longs. Il faudrait donc plutôt découper les textes en segments pour les classer. Voir la <a href="https://juba.github.io/rainette/articles/introduction_usage.html">présentation</a> de Julien Barnier pour ce faire !</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./corpus.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Créer un corpus à partir d’Europresse</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

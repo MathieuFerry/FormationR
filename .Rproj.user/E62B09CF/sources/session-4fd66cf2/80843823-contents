@@ -1,0 +1,360 @@
+# Les données de sondage, des données pondérées
+
+Nous avons jusqu'ici travaillé en supposant que nos données sont issues d'un échantillon qui ne présentent pas de poids de pondération.
+
+Or, c'est rarement le cas quand on travaille sur des données d'échantillon issue d'un protocole d'échantillonnage aléatoire (ou même par quotas, ou même aujourd'hui suivant d'autres méthodes...), pour lesquelles les poids permettent d'assurer la représentativité de l'échantillon à l'ensemble de la population (pour aller vite, dans le cas le plus courant, les poids corrigent des biais dans la collecte des données car la mise en oeuvre du plan de collecte n'a pas permis d'interroger tous les enquêté·es pressenti·es et le poids permet de corriger ces biais).
+
+Ces données sont très courantes en sciences sociales, même si on est aussi amené à travailler sur des populations entières, des données administratives, des données issues du web, etc, pour lesquelles il n'y a pas forcément de variable de poids d'échantillonnage.
+
+Ici, nous mobilisons une version allégée de la base de données "Histoire de vie 2003" de l'Insee, stockée dans le package questionr, pour illustrer l'usage des pondérations dans R.
+
+::: {.callout-note title="Exercice" icon="false"}
+-    Créer un script vide.
+
+-   Enregistrer ce script dans un dossier (par exemple "Formation R") en le nommant par exemple 4DonneesPond.R.
+
+-   Charger les packages mobilisés dans le chapitre précédents (tidyverse, questionr, kableExtra a minima). Installer et charger également les packages Hmisc et descriptio (de Nicolas Robette) qui contiennent quelques fonctions utiles pour pondérer des statistiques.
+
+-   Charger aussi ggplot2 (esquisse n'est pas utile ici).
+
+-   Charger la base de données Histoire de vie grâce à la commande data("hdv2003").
+:::
+
+## R et les données pondérées
+
+Dans R, il y a plusieurs stratégies pour gérer les données issues d'échantillon :
+
+-   Dans une stratégie de statistique inférentielle et notamment à partir du moment où on souhaite pondérer des modèles de régression, on passera par le package survey et son extension srvyr qui permettent de gérer les poids d'échantillonnage, mais aussi la structure de l'échantillon (les strates, les grappes, etc.). On se reportera aux [sections spécifiques](https://larmarange.github.io/guide-R/donnees_ponderees/plan-echantillonnage.html) du guide-R de Joseph Larmarange qui présente l'utilisation de ces packages.
+
+    -   Le principe est de définir un objet "design" qui décrit le plan d'échantillonnage à partir duquel on travaille
+
+    -   Ces packages ne sont pas présentés ici car dans la pratique on n'a pas toujours forcément besoin de définir précisément le plan d'échantillonnage (ça a de l'importance pour les intervalles de confiance, en tenant compte des variables de strates / grappes pour autant qu'elles soient présentes dans le jeu de données, on obtient des estimations généralement plus précises).
+
+-   On peut aussi tout à fait utiliser des fonctions de R sans passer par ces deux packages et dans un premier temps cela facilite l'intégration entre manipulations de données et descriptions statistiques tel que nous l'avons réalisé jusqu'à présent. C'est ce qui est présenté dans ce chapitre.
+
+Décrivons rapidement le jeu de données hdv2003 :
+
+```{r}
+#| eval: false
+
+str(hdv2003)
+```
+
+Le fichier contient 20 variables, dont id qui est un identifiant des observations et poids qui est la variable de pondération (occup est le statut par rapport à l'emploi, qualif est la PCS, clso est le sentiment d'appartenance à une classe sociale).
+
+::: {.callout-note title="Exercice" icon="false"}
+Quelles sont les variables quantitatives du jeu de données (à part id et poids) ?
+:::
+
+## Les données pondérées avec Hmisc & questionr
+
+### Résumer une variable quantitative avec les nombres de Tukey
+
+Pour obtenir les 5 nombres de Tukey d'une variable quantitative, il faut tenir compte des poids pour calculer le Q1, la médiane et le Q3, ce qu'on peut faire avec la variable wtd.quantile du package Hmisc. Ici, on étudie la distribution du nombre d'heures de visionnage de la télévision en fonction du sexe.
+
+```{r}
+#| eval: false
+
+hdv2003 |>
+  group_by(sexe) |>
+  summarise(
+    min    = min(heures.tv, na.rm = TRUE),
+    q1     = wtd.quantile(heures.tv,weights=poids, probs=0.25, na.rm = TRUE),
+    median = wtd.quantile(heures.tv, weights=poids,probs=.5, na.rm = TRUE),
+    q3     = wtd.quantile(heures.tv,weights=poids,probs= 0.75, na.rm = TRUE),
+    max    = max(heures.tv, na.rm = TRUE)
+  ) 
+```
+
+L'argument weights tient bien compte du poids de pondération.
+
+Si on veut inverser les lignes et les colonnes on pourra avoir recours à cette petite transformation :
+
+```{r}
+#| eval: false
+hdv2003 |>
+  group_by(sexe) |>
+  summarise(
+    min    = min(heures.tv, na.rm = TRUE),
+    q1     = wtd.quantile(heures.tv,weights=poids, probs=0.25, na.rm = TRUE),
+    median = wtd.quantile(heures.tv, weights=poids,probs=.5, na.rm = TRUE),
+    q3     = wtd.quantile(heures.tv,weights=poids,probs= 0.75, na.rm = TRUE),
+    max    = max(heures.tv, na.rm = TRUE)
+  ) |>
+  pivot_longer(min:max) |> pivot_wider(names_from=sexe,values_from=value) |>
+  kbl() |> kable_classic_2(full_width=F)
+```
+
+### L'histogramme pondéré
+
+Pour obtenir un histogramme en tenant compte de la pondération, il faut ajouter l'argument weight dans l'aes.
+
+```{r}
+#| eval: false
+ggplot(hdv2003, aes(x = age,y = ..density.., weight = poids)) +
+  geom_histogram(binwidth = 5, fill = "grey", color = "white") +
+  labs(title = "Histogramme pondéré de l'âge", x = "Âge", y = "Densité")+
+  theme_classic()
+```
+
+Si on préfère les effectifs pondérés :
+
+```{r}
+#| eval: false
+ggplot(hdv2003, aes(x = age, weight = poids)) +
+  geom_histogram(binwidth = 5, fill = "grey", color = "white") +
+  labs(title = "Histogramme pondéré de l'âge", x = "Âge", y = "Effectifs pondérés")+
+  theme_classic()
+
+```
+
+### La boîte à moustaches pondérée
+
+On peut manuellement calculer les seuils du boxplot et les indiquer à ggplot :
+
+```{r}
+#| eval: false
+box_stats <- hdv2003 %>%
+  group_by(sexe) %>%
+  summarise(
+    ymin  = wtd.quantile(age, poids, probs = 0.25)-1.5*(wtd.quantile(age, poids, probs = 0.5)-wtd.quantile(age, poids, probs = 0.25)),
+    lower = wtd.quantile(age, poids, probs = 0.25),
+    middle= wtd.quantile(age, poids, probs = 0.50),
+    upper = wtd.quantile(age, poids, probs = 0.75),
+    ymax  = wtd.quantile(age, poids, probs = 0.75)+1.5*(wtd.quantile(age, poids, probs = 0.5)-wtd.quantile(age, poids, probs = 0.25))
+  )
+ggplot(box_stats, aes(x = sexe,color=sexe)) +
+  geom_boxplot(
+    aes(
+      ymin = ymin,
+      lower = lower,
+      middle = middle,
+      upper = upper,
+      ymax = ymax
+    ),
+    stat = "identity"
+  ) +
+  theme_classic()
+#Note 1 : par défaut dans geom_boxplot, on peut aussi ajouter l'argument weight. 
+#Note 2 : Le graphique serait légèrement différent au niveau des moustaches car si Q1-1.5*IQR ou Q3+1.5*IQR correspondent à des valeurs non observées dans l'échantillon, alors les moustaches retiennent les valeurs minimum et maximum observées dans l'échantillon, ce qui est ma foi tout à fait raisonnable ! 
+```
+
+### Résumer avec la moyenne et l'écart-type
+
+Si on veut plutôt résumer une variable avec la moyenne et l'écart-type, on peut écrire, pour étudier l'âge en fonction du sexe :
+
+```{r}
+#| eval: false
+hdv2003 |>
+  group_by(sexe) |>
+  summarise(
+    mean=wtd.mean(age,weights=poids,na.rm=T),
+    sd=sqrt(wtd.var(age,weights=poids,na.rm=T))
+  ) |>
+  pivot_longer(mean:sd) |> pivot_wider(names_from=sexe,values_from=value) |>
+  kbl(digits=1) |> kable_classic_2(full_width=F)
+```
+
+### Recoder une variable quantitative avec les quantiles pondérés et regarder sa distribution
+
+Si on veut découper une variable quantitative en tranches de quantiles, il faut tenir compte de la pondération encore une fois. L'interface icut() de questionr ne permet pas de prendre en compte les quantiles pondérés. Ainsi, il faudra avoir recours à un recodage avec le code directement :
+
+```{r}
+#| eval: false
+
+hdv2003$age_rec <- cut(hdv2003$age,
+                       include.lowest = TRUE,
+                       right = FALSE,
+                       dig.lab = 4,
+                       breaks = wtd.quantile(hdv2003$age,weights=hdv2003$poids,probs=c(0,.25,.5,.75,1),na.rm=T)
+)
+```
+
+On pourra ensuite vérifier la distribution des tranches d'âge avec les fonctions de questionr :
+
+```{r}
+#| eval: false
+
+hdv2003 |> freqtable(age_rec,weights=poids) |> freq()
+
+```
+
+La fonction freqtable() accepte bien une variable de pondération. À noter que les N des effectifs n'ont ici pas beaucoup de sens : ils correspondent à des effectifs pondérés.
+
+### La corrélation en tenant compte de la pondération
+
+Le package [descriptio](https://nicolas-robette.github.io/descriptio/index.html) de Nicolas Robette propose une fonction weighted.cor() qui permet de tenir compte de la pondération grâce à l'argument weights :
+
+```{r}
+#| eval: false
+weighted.cor(hdv2003$age,hdv2003$heures.tv,weights=hdv2003$poids,na.rm=T)
+```
+
+Pour calculer la corrélation pondérée sur des sous-groupes (en gardant le coefficient et la p-valeur) :
+
+```{r}
+#| eval: false
+hdv2003 |>
+ group_by(sexe) |>
+  reframe(
+    cor = weighted.cor(age, heures.tv, weights = poids,na.rm=T)
+  )
+```
+
+Pour une matrice des corrélations :
+
+```{r}
+#| eval: false
+hdv2003 |> 
+  select(age,freres.soeurs,heures.tv) |>
+  weighted.cor2(weights=hdv2003$poids,na.rm=T) |>
+  round(2)
+```
+
+### Le tableau croisé et le diagramme à barres pondéré
+
+Pour réaliser un tableau croisé sur données pondérées, rien de plus simple, il suffit d'ajouter l'argument weights à freqtable :
+
+```{r}
+#| eval: false
+hdv2003 |> freqtable(nivetud,cinema,weights=poids) |> rprop()
+```
+
+Si on veut ignorer la modalité NA :
+
+```{r}
+#| eval: false
+hdv2003 |> freqtable(nivetud,cinema,weights=poids,na.rm = T) |> rprop()
+```
+
+::: {.callout-note title="Bonus" collapse="true"}
+Pour créer un diagramme à barres de la proportion de "Oui" suivant le niveau d'études :
+
+```{r}
+#| eval: false
+
+#D'abord, stocker le tableau croisé des % en ligne dans l'objet tab
+tab <- hdv2003 |> 
+  freqtable(nivetud, cinema, weights = poids, na.rm = TRUE) |> 
+  rprop(total=F) #ici on a indiqué qu'on ne souhaitait pas le total
+
+#On transforme notre tab en un objet tidy pour le ggplot: 
+df_tab <- as.data.frame.matrix(tab) |> #cela permet de transformer la matrice en data frame
+  rownames_to_column("nivetud") |> #on remet le niveau d'études comme un nom de colonnes
+  mutate(nivetud=factor(nivetud,levels=levels(hdv2003$nivetud))) #cette manipulation permet de s'assurer qu'on va projeter les modalités du niveau d'éducation dans le bon ordre. 
+
+ggplot(df_tab, aes(x = nivetud, y = Oui)) + #les % sont stockés dans Oui. 
+  geom_bar(stat = "identity") + 
+  geom_text(aes(label = sprintf("%0.f%%", Oui)),#On ajoute les labels au dessus de chaque barre
+            hjust = -0.1, size = 3.5) +
+  ylim(c(0,67))+ #On s'assure que les labels de % seront bien sur le graphique
+  coord_flip()+ #On inverse l'axe des x et des y. 
+  #On crée des jolis labels pour les axes 
+  labs(
+    x = "Niveau d'études",
+    y = "Proportion (%)",
+    title = "Sortie au cinéma selon le niveau d'études"
+  ) +
+  theme_classic()
+```
+
+Sur un tableau croisé où il y a plus de deux colonnes, les commandes pour obtenir le tableau croisé sont les mêmes :
+
+```{r}
+#| eval: false
+hdv2003 |> 
+  freqtable(age_rec, occup, weights = poids, na.rm = TRUE) |> 
+  rprop()
+```
+
+Pour construire un graphique avec ggplot, c'est un peu plus compliqué :
+
+```{r}
+#| eval: false
+tab<-hdv2003 |> 
+  freqtable(age_rec, occup, weights = poids, na.rm = TRUE) |> 
+  rprop(total=F)
+df_tab <- as.data.frame.matrix(tab) |> 
+  rownames_to_column("age_rec") |>
+  #il faut remettre tous les pourcentages dans une seule colonne pour ggplot
+  pivot_longer(-age_rec,names_to="occup",values_to="prop") |> 
+  mutate(age_rec=factor(age_rec,levels=levels(hdv2003$age_rec)),
+         occup=factor(occup,levels=levels(hdv2003$occup))
+  )
+
+ggplot(df_tab, aes(x = age_rec, y = prop, fill=occup)) +
+  geom_bar(stat = "identity",position="stack") + 
+  #on ajoute des labels qui ne seront montrés que s'ils sont supérieurs à 5%
+  geom_text(
+    aes(label = ifelse(prop > 5, sprintf("%0.0f%%", prop), "")),
+    position = position_stack(vjust = 0.5),
+    color = "white",
+    size = 3
+  ) +
+  #On a choisi une palette de couleurs
+  scale_fill_brewer(palette="Dark2")+
+  coord_flip()+
+  labs(
+    x = "Âge",
+    y = "Proportion (%)",
+    fill="Statut d'occupation"
+  ) +
+  theme_classic()+
+  theme(legend.position="bottom")
+```
+
+Pour le diagramme à barres adjacents :
+
+```{r}
+#| eval: false
+ggplot(df_tab, aes(x = occup, y = prop, fill=age_rec)) +
+  geom_bar(stat = "identity",position=position_dodge(width = 0.9)) + 
+  geom_text(
+    aes(label = sprintf("%0.0f%%", prop)),
+    position = position_dodge(width = 0.9),
+    vjust=-.5,
+    color = "black",
+    size = 3
+  ) +
+  scale_fill_brewer(palette="Oranges")+
+  labs(
+    x = "Statut d'occupation",
+    y = "Proportion (%)",
+    fill="Âge"
+  ) +
+  theme_classic()+
+  theme(legend.position="bottom")
+```
+:::
+
+### Le test du chi-deux et le V de Cramer avec pondération
+
+Le test du chi-deux est sensible à la taille de l'échantillon. Or si on crée simplement un tableau des effectifs pondérés, on "grossit" artificiellement la taille de l'échantillon en utilisant chisq.test. On pourra avoir recours à la fonction assoc.twocat() dans le package descriptio qui rassemble de nombreuses mesures d'association entre deux variables catégorielles. À noter que le test du chi-2 est réalisé à partir d'un "[test de permutation](https://nicolas-robette.github.io/GDAtools/articles/french/Tutoriel_descr.html)" (plutôt qu'un test fréquentiste, il faut donc choisir un nombre de permutations avec l'argument nperm, ici 100 mais choisir plutôt 1000).
+
+```{r}
+#| eval: false
+tri<-assoc.twocat(hdv2003$age_rec,hdv2003$occup, weights=hdv2003$poids,nperm=100,na.rm=T)
+tri$global$permutation.pvalue
+```
+
+Pour obtenir le V de Cramer :
+
+```{r}
+tri$global$cramer.v
+```
+
+À noter qu'il est ici exprimé en pourcentage (et varie donc entre 0 et 100 plutôt que 0 et 1).
+
+## Exercices
+
+::: {.callout-note title="Exercice" icon="false"}
+Pour tous les exercices suivants, utiliser la pondération du jeu de données.
+
+1.  Créer une nouvelle variable de diplôme en rassemblant de manière logique les modalités de nivetud. Vérifier la distribution de cette nouvelle variable en la croisant avec nivetud.
+
+2.  Calculer les 5 nombres de Tukey et réaliser des boîtes à moustaches sur heures.tv selon cette nouvelle variable du niveau d'études. Observe-t-on des différences notables ?
+
+3.  Recoder la variable heures.tv en 3 modalités : la première comprend les individus qui ne regardent jamais la tv, la seconde ceux qui la regardent moins que la médiane (parmi les individus qui la regardent) et la troisième ceux qui la regardent plus que la médiane (parmi les individus qui la regardent). Nommer les modalités construites : Rien, Faible, Elevé.
+
+4.  À partir de cette variable, étudier la fréquence de visionnage de la télévision suivant le sexe, l'âge recodé en quartiles et le niveau de diplôme. Réaliser des tests de significativité Si vous le souhaitez, réaliser des diagrammes à barres empilées.
+:::

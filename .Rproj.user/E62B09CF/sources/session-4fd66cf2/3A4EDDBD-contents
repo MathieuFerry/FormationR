@@ -1,0 +1,394 @@
+# Statistiques univariées et recodages des variables
+
+Dans ce chapitre, nous allons nous pencher sur la description univariée des variables, aussi bien des variables numériques (quantitatives) que des variables catégorielles (qualitatives) et sur leur recodage.
+
+Nous allons avoir besoin de trois packages qui n'ont pas encore été chargés (et que vous n'avez peut-être pas encore installé).
+
+Dans le code ci-dessous, voici une proposition de code pour vérifier l'installation des packages nécessaires à ce chapitre et les charger dans l'environnement.
+
+Nous utilisons les mêmes données que dans l'introduction. Notons que nous utilisons ici des données non pondérées. Pour utiliser des données pondérées, on pourra se reporter au chapitre dédié (Approfondissements).
+
+::: {.callout-note title="Exercice" icon="false"}
+-    Créer un script vide.
+
+-   Enregistrer ce script dans un dossier (par exemple "Formation R") en le nommant par exemple 2Statunis.R.
+
+-   Charger la base de données des salaires et ajouter les commandes ci-dessous pour installer / charger les packages.
+
+```{r}
+#| eval: false
+#| eval: false
+# On liste les packages dont on a besoin dans un vecteur nommé load.lib. 
+load.lib <- c("tidyverse","questionr","esquisse","kableExtra") 
+
+install.lib <- load.lib[!load.lib %in% installed.packages()] # On regarde les paquets qui ne sont pas installés
+
+for (lib in install.lib) install.packages(lib,dependencies=TRUE) # On installe ceux-ci
+
+sapply(load.lib,require,character=TRUE) # Et on charge tous les paquets nécessaires
+```
+:::
+
+```{r}
+#| echo: false
+#| message: false
+
+library(readr)
+library(ggplot2)
+library(tidyverse)
+
+Salaires <- read_delim("~/Documents/Enseignements/Année 2024-2025/Formation R/Bdd/Salaires.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+```
+
+## Décrire une variable quantitative
+
+### Résumer les variables par quelques statistiques
+
+Dans R, les fonctions de base permettent de sortir les nombres de Tukey pour une variable quantitative :
+
+-   Minimum
+
+-   Premier quartile (Q1)
+
+-   Médiane (Q2)
+
+-   Troisième quartile (Q3)
+
+-   Maximum
+
+Pour obtenir ces statistiques descriptives on pourra écrire :
+
+```{r}
+#| eval: false
+summary(Salaires$salaire)
+```
+
+ou :
+
+```{r}
+#| eval: false
+fivenum(Salaires$salaire)
+```
+
+Quel serait l'équivalent dans le tidyverse, ce qui nous serait bien utile, notamment si nous souhaitons filtrer les lignes avant d'obtenir ces statistiques descriptives ?
+
+Une solution serait de recourir aux fonctions permettant de générer chacune des statistiques, que nous connaissons déjà pour la moyenne :
+
+```{r}
+#| eval: false
+Salaires |>
+  summarise(
+    min    = min(salaire, na.rm = TRUE),
+    q1     = quantile(salaire, 0.25, na.rm = TRUE),
+    median = median(salaire, na.rm = TRUE),
+    q3     = quantile(salaire, 0.75, na.rm = TRUE),
+    max    = max(salaire, na.rm = TRUE)
+  )
+```
+
+On peut aussi utiliser la fonction fivenum, à ce moment là au lieu d'utiliser summarise, il faut utiliser reframe (car la sortie de fivenum renvoie plusieurs nombres) :
+
+```{r}
+#| eval: false
+Salaires |>
+  reframe(
+    stat = c("min", "Q1", "médiane", "Q3", "max"),
+    salaire = fivenum(salaire)
+  )
+```
+
+Avec la même logique, on peut alors sortir ces statistiques en filtrant sur les hommes et en s'intéressant à la fois à la variable du salaire et de l'expérience par exemple :
+
+```{r}
+#| eval: false
+Salaires |>
+  filter(genre=="Homme") |> #ou sexe=="
+  reframe(
+    stat = c("min", "Q1", "médiane", "Q3", "max"),
+    salaire = fivenum(salaire),
+    experience = fivenum(experience)
+  )
+```
+
+On a fait une si jolie sortie qu'on souhaiterait la sortir sous forme d'un tableau, mais voilà le copier-coller de la console n'est pas très joli...
+
+Pas de panique, il existe plein de packages dans R pour faire des sorties de jolis tableaux. On se propose ici d'utiliser [kableExtra](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html) :
+
+```{r}
+#| eval: false
+sumH<-Salaires |>
+  filter(genre=="Homme") |> #ou sexe=="
+  reframe(
+    stat = c("min", "Q1", "médiane", "Q3", "max"),
+    salaire = fivenum(salaire),
+    experience = fivenum(experience)
+  )
+
+sumH |> kbl() |> kable_classic(full_width = F)
+```
+
+La fonction kbl transforme l'objet sumH en un tableau de format latex/html qui est afficé dans le "Viewer" (en bas à droite) et la fonction kable_classic est une des fonctions de formatage par défaut que j'ai choisi. On peut customiser à l'infini ce type de tableau (y compris en ajoutant titre, légende...), le principal intérêt étant surtout de pouvoir le copier-coller de manière propre dans son rapport/article/thèse.
+
+![Tableau créé avec kableExtra et visible dans le Viewer](images/clipboard-3201868486.png)
+
+### Résumer avec les quantiles
+
+On peut aussi vouloir résumer sa variable avec des quantiles, qui sont des seuils qui permettent de séparer une distribution en parties égales. Par exemple, si on souhaite obtenir les déciles d'une distribution :
+
+```{r}
+#| eval: false
+quantile(Salaires$salaire, probs = seq(0.1, 0.9, by = 0.1))
+```
+
+ou :
+
+```{r}
+#| eval: false
+Salaires |>
+  reframe(
+    stat = paste0("D", 1:9),
+    salaire = quantile(salaire, probs = seq(0.1, 0.9, by = 0.1))
+  )
+
+```
+
+::: {.callout-note title="Exercice" icon="false"}
+1.  Résumer la distribution de l'âge avec des quartiles.
+
+2.  Réaliser un tableau dans le Viewer de cette sortie.
+:::
+
+### Résumer une variable quantitative avec un graphique
+
+Tout cela est bien beau et semble nous suggérer que le salaire est une variable très asymétrique avec une queue de distribution très étalée sur la droite. Peut-on visualiser la distribution ?
+
+Oui, on peut faire un petit histogramme de base, en écrivant :
+
+```{r}
+#| eval: false
+hist(Salaires$salaire)
+```
+
+Si on veut faire un graphique plus joli, on utilisera le package ggplot2 (chargé avec l'extension tidyverse). Comme nous nous familiarisons avec R, on peut utiliser le package esquisse qui propose une solution clic-bouton pour réaliser son graphique. Il faut exécuter la ligne suivante :
+
+```{r}
+#| eval: false
+esquisse(Salaires)
+```
+
+Cela devrait charger une interface avec en haut les différentes variables du jeu de données qu'il va falloir glisser dans les cases correspondantes.
+
+![Interface d'esquisse](images/clipboard-3333850135.png)
+
+En faisant glisser la variable salaire dans la case X, un histogramme se crée automatiquement. On peut modifier cette représentation et par exemple préférer une distribution avec la fonction de densité. L'ensemble du graphique est "customizable" avec les options dessous.
+
+Enfin, on peut enregistrer son graphique mais aussi copier-coller le code permettant de créer le même graphique sans avoir à réouvrir Esquisse !
+
+![Création d'un histogramme avec Esquisse](images/clipboard-1638634765.png)
+
+Quelques mots sur le code permettant de faire cet histogramme :
+
+```{r}
+#|eval: false
+ggplot(Salaires) + 
+  aes(x = salaire) +
+  geom_histogram(bins = 31L, fill = "#112446") +
+  theme_minimal()
+```
+
+-   ggplot dit à R qu'on crée un graphique sur les données de la base salaire,
+
+-   les fonctions au sein du ggplot sont séparées par des +,
+
+-   la fonction aes définit les variables mises en jeu dans le graphique (ici le salaire en x),
+
+-   la fonction "geom\_..." définit la représentation graphique souhaitée avec les paramètres automatiquement choisi (la couleur et le nombre de bins : plus il est élevé, plus les barres sont fines),
+
+-   et theme_minimal assigne un "theme" de fond pour le graphique.
+
+## Décrire une variable qualitative
+
+Décrire une variable quantitative c'est bien beau, mais nous avons souvent pas mal de variables qualitatives dans nos jeux de données. Comment la décrire ?
+
+La fonction freq du package permet de sortir le nombre d'observations, la proportion dans l'échantillon et la proportion cumulée :
+
+```{r}
+#|eval: false
+freq(Salaires$sexe)
+```
+
+Il est aussi possible d'utiliser cette fonction dans le tidyverse en filtrant sur un sous-échantillon de sa base :
+
+```{r}
+#|eval: false
+
+Salaires |> filter(race=="Blanc") |> freqtable(genre) |> freq()
+```
+
+::: {.callout-note title="Exercice" icon="false"}
+Avec Esquisse, on peut aussi réaliser un diagramme à barres non empilées d'une variable qualitative. Reproduire le graphique ci-dessous :
+
+![Distribution de la variable sexe](images/clipboard-1246898966.png)
+:::
+
+Si on veut ajouter le nombre d'individus par modalités sur le graphique on pourra ajouter cette ligne de code :
+
+```{r}
+#| eval: false
+
+ggplot(Salaires) +
+  aes(x = genre, fill = genre) +
+  geom_bar() +
+  geom_text(stat = "count", aes(label = after_stat(count)), hjust = 1.1, size = 6) +  #Ligne à ajouter
+  scale_fill_brewer(palette = "Dark2", direction = 1) +
+  coord_flip() +
+  theme_minimal() +
+  theme(
+    axis.title.y = element_text(size = 18L),
+    axis.title.x = element_text(size = 18L),
+    axis.text.y = element_text(size = 18L),
+    axis.text.x = element_text(size = 18L),
+    legend.text = element_text(size = 18L),
+    legend.title = element_text(size = 18L)
+  )
+```
+
+## Recoder une variable quanti en une variable quali
+
+Pour recoder une variable quantitative en une variable qualitative, rien de plus simple. Dans R, nous pouvons utiliser un add-ins de Julien Barnier dans son package questionr, icut. Pour le lancer, on peut cliquer sur "Addins" dans RStudio et cliquer sur "Numeric range dividing". Ou alors, on peut simplement écrire dans la console :
+
+```{r}
+#| eval: false
+icut()
+```
+
+Cela devrait ouvrir la console. On peut alors choisir la base au sein de laquelle on veut recoder une variable, choisir la variable à recoder et indiquer le nom de la variable recodée (par défaut, ancien nom de la variable où est ajouté "\_rec"). Cet add-ins s'appuie sur la fonction cut() de R.
+
+Différentes options de recodage sont proposées, soit de manière manuelle (on a repéré des valeurs saillantes, ou on connait des valeurs saillantes d'une variable, par exemple un niveau de pauvreté...), en utilisant un algorithme de reclassification (Jenks que les géographes aiment bien, ou d'autres algorithmes), ou avec les quantiles, ou avec classes d'intervalles égaux dans la distribution (equal width).
+
+Il ne faut pas confondre les deux derniers :
+
+-   les quantiles sont des seuils qui permettent de séparer l'échantillon en n parties égales
+
+-   les classes d'intervalles égaux coupent la distribution (ici les valeurs du salaire) en tranches égales. Si la distribution n'est pas unifome, classes de quantiles et classes d'intervalles seront très différents (et c'est le cas ici pour le salaire qui a une distribution très asymétrique).
+
+![Interface de icut](images/clipboard-2823604675.png)
+
+Dans la pratique, j'aime bien les quantiles, qui sont des seuils qui permettent de séparer une distribution ordonnée en parties égales. On crée alors des classes ou des tranches ou des groupes de quantiles, par exemple :
+
+-   Avec des quartiles
+
+-   Avec des quintiles
+
+-   Avec des déciles
+
+-   Avec des centiles
+
+Probablement par abus de langage, on a parfois tendance à dire simplement qu'on a recodé notre variable en quantile (par exemple en déciles) et qu'on a créé des déciles (et non des classes de déciles). C'est pratique, mais il ne faut pas oublier que les quantiles sont avant tout des seuils dans une distribution !
+
+Ici, recodons la variable salaires en salaires_rec en utilisant les quintiles. Il faut choisir :
+
+-   Cutting method : Quantile
+
+-   Breaks number : 5
+
+-   Breaks : rien à modifier, les quantiles ont été calculés automatiquement
+
+-   Right-closed intervals : par défaut, la fonction cut propose des intervalles fermés à gauche et ouverts à droite. Suivant les cas (et c'est le cas ici pour bien équilibrer les groupes), on peut choisir des intervalles fermés à droite, donc cocher l'option.
+
+-   Include extreme : on veut s'assurer qu'aucune valeur extrême n'est omise dans la catégorisation, donc on coche.
+
+-   De même avec Append extreme values if necessary
+
+-   Label digits : le nombre de décimales retenues pour définir les seuils (notre variable salaire n'a pas de décimale donc ce n'est pas important ici).
+
+Le troisième onglet propose le code, un tableau de distribution de la variable recodée et un diagramme à barres pour visualiser la distribution des différentes modalités (c'est en regardant ce graphique que j'ai décidé de fermer les intervalles à droite pour légèrement rééquilibrer les modalités qui doivent l'être vu qu'on a choisi des quintiles).
+
+On peut alors cliquer sur Done. Attention, la variable n'a pas été créée mais dans la console, le code permettant de la créer est proposé, il suffit de le copier-coller dans son code et de le faire tourner (on peut aussi le modifier directement soi-même si on veut) :
+
+```{r}
+#| eval: false
+
+## Cutting Salaires$salaire into Salaires$salaire_rec
+Salaires$salaire_rec <- cut(Salaires$salaire,
+                        include.lowest = TRUE,
+                        right = TRUE,
+                        dig.lab = 4,
+                        breaks = c(160, 800, 1200, 1920, 11008, 42064)
+)
+```
+
+::: {.callout-note title="Exercice" icon="false"}
+À l'aide des fonctions vues précédemment, proposer un code permettant de vérifier la distribution de la variable salaire_rec. Vérifier en particulier qu'il n'y a pas eu de NA dans la création de la variable et que les classes de quintiles sont à peu près égaux (on ne s'attend pas forcément à avoir des classes parfaitement égales si plusieurs individus ont le même salaire au niveau des valeurs de seuils).
+:::
+
+## Recoder les modalités d'une variables quali
+
+L'onglet icut ne permet pas d'ajouter des labels aux classes créées.
+
+On peut modifier la fonction cut pour indiquer des noms grâce à l'argument "labels" :
+
+```{r}
+#| eval: false
+Salaires$salaire_quint <- cut(Salaires$salaire,
+                        include.lowest = TRUE,
+                        right = TRUE,
+                        dig.lab = 4,
+                        breaks = c(160, 800, 1200, 1920, 11008, 42064),
+                        labels=c("Très faible","Faible","Moyen","Elevé","Très élevé")
+)
+```
+
+Une autre solution est d'utiliser un autre add-ins du package de questionr, "Levels recoding" (disponible dans l'onglet Addins) qu'on peut appeler grâce à la fonction :
+
+```{r}
+#| eval: false
+irec()
+```
+
+On peut choisir de recoder ses variables en format *character* ou en format *factor*. Dans la pratique, dès lors qu'on a une variable avec une liste fermée de catégories, on travaille avec des *factor* (notamment parce qu'on peut ordonner les catégories). On privilégiera le format *character* pour des variables de type textuel, des phrases, des paragraphes, etc (dans la pratique, plusieurs fonctions de R transforment automatiquement une variable *character* en *factor* avant un traitement statistique).
+
+![Interface de recodage d'irec](images/clipboard-4157336410.png)
+
+Là encore, le troisième onglet permet de récupérer le code R correspondant et de vérifier qu'aucune modalité de la variable recodée n'est oubliée (elle serait transformée en NA). À noter qu'il faut explicitement copier le code dans le script et le faire tourner pour que les changements s'appliquent à la variable.
+
+::: {.callout-note title="Exercice" icon="false"}
+1.  Recoder la variable race en une variable "maj" qui distinguent la catégorie raciale "majoritaire" (les Blancs) et les catégories "minoritaires" (les Hispaniques et les Noirs).
+
+2.  Réaliser une sortie dans le Viewer d'un tableau de la distribution de cette nouvelle variable.
+:::
+
+## Modifier l'ordre des modalités
+
+Un dernier add-ins bien utile est celui permettant le réordonnancement des catégories d'une variable de type *factor*.
+
+Par défaut, les modalités sont souvent ordonnées par ordre alphabétique.
+
+Dans la pratique, c'est rarement l'ordre que nous souhaitons privilégier !
+
+L'onglet "Levels ordering" permet alors de réordonner ses catégories.
+
+```{r}
+#| eval: false
+iorder()
+```
+
+::: {.callout-note title="Exercice" icon="false"}
+Réordonner les catégories de la variable sexe.
+:::
+
+## Exercices
+
+On propose de répondre aux questions suivantes à l'aide des outils que nous avons vu dans ce chapitre :
+
+::: {.callout-note title="Exercice" icon="false"}
+1.  La médiane des salaires des individus blancs est-elle plus ou moins élevée que celle des individus noirs et hispaniques ?
+
+2.  Quelle est la répartition des femmes et des hommes dans l’échantillon ? Parmi elles et eux, quelle proportion appartient au décile supérieur des salaires (les 10 % les plus élevés) ? Ces différences suggèrent-elles un effet du genre sur la probabilité d’accéder aux salaires les plus élevés ?
+
+3.  Créer une variable jeune qui vaut "oui" si l’individu a moins de 30 ans (et "non" sinon). Quelle est la proportion des jeunes dans l'échantillon ?
+
+4.  Quelle est la répartition des jeunes chez les femmes ? Chez les hommes ?
+
+5.  Les jeunes ont-ils un niveau plus ou moins élevé d'expérience que le reste de la population ?
+:::

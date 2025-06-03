@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Formation R - 3&nbsp; Statistiques bivariées et graphiques</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./donneespond.html" rel="next">
+<link href="./statunis.html" rel="prev">
+<link href="./images/icon.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./statunis.html"><strong>Manipuler et analyser ses données</strong></a></li><li class="breadcrumb-item"><a href="./statbis.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Statistiques bivariées et graphiques</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./images/icon.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Formation R</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Formation-R.pdf" rel="" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Préface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text"><strong>À la découverte de R</strong></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text"><strong>Manipuler et analyser ses données</strong></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./statunis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistiques univariées et recodages des variables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./statbis.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Statistiques bivariées et graphiques</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text"><strong>Approfondissements</strong></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./donneespond.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Les données de sondage, des données pondérées</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./statsmultis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Les relations multivariées entre variables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./syntaxe.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Organisation du code et manipulations avancées</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text"><strong>Analyse statistique textuelle</strong></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./corpus.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Créer un corpus à partir d’Europresse</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./textometrie.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Quelques outils textométriques dans R</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#lassociation-entre-deux-variables-quantitatives-et-le-nuage-de-points" id="toc-lassociation-entre-deux-variables-quantitatives-et-le-nuage-de-points" class="nav-link active" data-scroll-target="#lassociation-entre-deux-variables-quantitatives-et-le-nuage-de-points"><span class="header-section-number">3.1</span> L’association entre deux variables quantitatives et le nuage de points</a>
+  <ul class="collapse">
+  <li><a href="#le-nuage-de-points-et-la-corrélation-de-pearson" id="toc-le-nuage-de-points-et-la-corrélation-de-pearson" class="nav-link" data-scroll-target="#le-nuage-de-points-et-la-corrélation-de-pearson"><span class="header-section-number">3.1.1</span> Le nuage de points et la corrélation de Pearson</a></li>
+  <li><a href="#corrélation-de-pearson-et-de-spearman" id="toc-corrélation-de-pearson-et-de-spearman" class="nav-link" data-scroll-target="#corrélation-de-pearson-et-de-spearman"><span class="header-section-number">3.1.2</span> Corrélation de Pearson et de Spearman ?</a></li>
+  <li><a href="#la-corrélation-sur-des-sous-groupes" id="toc-la-corrélation-sur-des-sous-groupes" class="nav-link" data-scroll-target="#la-corrélation-sur-des-sous-groupes"><span class="header-section-number">3.1.3</span> La corrélation sur des sous-groupes</a></li>
+  <li><a href="#matrice-des-corrélations-et-matrice-des-nuages-de-points" id="toc-matrice-des-corrélations-et-matrice-des-nuages-de-points" class="nav-link" data-scroll-target="#matrice-des-corrélations-et-matrice-des-nuages-de-points"><span class="header-section-number">3.1.4</span> Matrice des corrélations et matrice des nuages de points</a></li>
+  </ul></li>
+  <li><a href="#lassociation-entre-une-variable-quali-et-une-variable-quanti-et-la-boite-à-moustaches" id="toc-lassociation-entre-une-variable-quali-et-une-variable-quanti-et-la-boite-à-moustaches" class="nav-link" data-scroll-target="#lassociation-entre-une-variable-quali-et-une-variable-quanti-et-la-boite-à-moustaches"><span class="header-section-number">3.2</span> L’association entre une variable quali et une variable quanti et la boite à moustaches</a>
+  <ul class="collapse">
+  <li><a href="#statistiques-univariées-par-groupe" id="toc-statistiques-univariées-par-groupe" class="nav-link" data-scroll-target="#statistiques-univariées-par-groupe"><span class="header-section-number">3.2.1</span> Statistiques univariées par groupe</a></li>
+  <li><a href="#résumer-par-la-moyenne-et-lécart-type" id="toc-résumer-par-la-moyenne-et-lécart-type" class="nav-link" data-scroll-target="#résumer-par-la-moyenne-et-lécart-type"><span class="header-section-number">3.2.2</span> Résumer par la moyenne et l’écart-type</a></li>
+  <li><a href="#la-boîte-à-moustaches-un-peu-dexplication" id="toc-la-boîte-à-moustaches-un-peu-dexplication" class="nav-link" data-scroll-target="#la-boîte-à-moustaches-un-peu-dexplication"><span class="header-section-number">3.2.3</span> La boîte à moustaches : un peu d’explication</a></li>
+  <li><a href="#la-boîte-à-moustaches-un-peu-de-pratique" id="toc-la-boîte-à-moustaches-un-peu-de-pratique" class="nav-link" data-scroll-target="#la-boîte-à-moustaches-un-peu-de-pratique"><span class="header-section-number">3.2.4</span> La boîte à moustaches : un peu de pratique</a></li>
+  </ul></li>
+  <li><a href="#lassociation-entre-deux-variables-qualis-et-le-tableau-croisé" id="toc-lassociation-entre-deux-variables-qualis-et-le-tableau-croisé" class="nav-link" data-scroll-target="#lassociation-entre-deux-variables-qualis-et-le-tableau-croisé"><span class="header-section-number">3.3</span> L’association entre deux variables qualis et le tableau croisé</a>
+  <ul class="collapse">
+  <li><a href="#sur-quelques-conventions-du-tableau-croisé" id="toc-sur-quelques-conventions-du-tableau-croisé" class="nav-link" data-scroll-target="#sur-quelques-conventions-du-tableau-croisé"><span class="header-section-number">3.3.1</span> Sur quelques conventions du tableau croisé</a></li>
+  <li><a href="#mise-en-pratique-du-tableau" id="toc-mise-en-pratique-du-tableau" class="nav-link" data-scroll-target="#mise-en-pratique-du-tableau"><span class="header-section-number">3.3.2</span> Mise en pratique du tableau</a></li>
+  <li><a href="#le-tableau-et-son-graphique" id="toc-le-tableau-et-son-graphique" class="nav-link" data-scroll-target="#le-tableau-et-son-graphique"><span class="header-section-number">3.3.3</span> Le tableau et son graphique</a></li>
+  <li><a href="#la-force-de-lassociation" id="toc-la-force-de-lassociation" class="nav-link" data-scroll-target="#la-force-de-lassociation"><span class="header-section-number">3.3.4</span> La force de l’association</a></li>
+  <li><a href="#un-mot-sur-le-test-du-khi-deux" id="toc-un-mot-sur-le-test-du-khi-deux" class="nav-link" data-scroll-target="#un-mot-sur-le-test-du-khi-deux"><span class="header-section-number">3.3.5</span> Un mot sur le test du khi-deux</a></li>
+  </ul></li>
+  <li><a href="#exercices" id="toc-exercices" class="nav-link" data-scroll-target="#exercices"><span class="header-section-number">3.4</span> Exercices</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Statistiques bivariées et graphiques</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Dans ce chapitre, nous abordons maintenant les statistiques bivariées. Nous utilisons la même base et les mêmes packages que nous avons déjà installés dans le chapitre sur les statistiques univariées, avec en plus un package GGally qui permet de réaliser des diagrammes de nuages de points sur plusieurs variables (à voir plus bas).</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Exercice">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><p>Créer un script vide.</p></li>
+<li><p>Enregistrer ce script dans un dossier (par exemple “Formation R”) en le nommant par exemple 3Statbis.R.</p></li>
+<li><p>Charger la base de données des salaires et ajouter les commandes ci-dessous pour installer / charger les packages.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># On liste les packages dont on a besoin dans un vecteur nommé load.lib. </span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>load.lib <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"tidyverse"</span>,<span class="st">"questionr"</span>,<span class="st">"esquisse"</span>,<span class="st">"kableExtra"</span>,<span class="st">"GGally"</span>) </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>install.lib <span class="ot">&lt;-</span> load.lib[<span class="sc">!</span>load.lib <span class="sc">%in%</span> <span class="fu">installed.packages</span>()] <span class="co"># On regarde les paquets qui ne sont pas installés</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (lib <span class="cf">in</span> install.lib) <span class="fu">install.packages</span>(lib,<span class="at">dependencies=</span><span class="cn">TRUE</span>) <span class="co"># On installe ceux-ci</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(load.lib,require,<span class="at">character=</span><span class="cn">TRUE</span>) <span class="co"># Et on charge tous les paquets </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+<section id="lassociation-entre-deux-variables-quantitatives-et-le-nuage-de-points" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="lassociation-entre-deux-variables-quantitatives-et-le-nuage-de-points"><span class="header-section-number">3.1</span> L’association entre deux variables quantitatives et le nuage de points</h2>
+<section id="le-nuage-de-points-et-la-corrélation-de-pearson" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="le-nuage-de-points-et-la-corrélation-de-pearson"><span class="header-section-number">3.1.1</span> Le nuage de points et la corrélation de Pearson</h3>
+<p>Pour étudier la relation entre deux variables quantitatives, rien ne vaut le nuage de points (le scatterplot en anglais) que nous pouvons réaliser grâce au package esquisse :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">esquisser</span>(Salaires)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-32967634.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Nuage de points entre l’âge et l’expérience dans esquisse</figcaption>
+</figure>
+</div>
+<p>Le nuage de points entre l’âge et l’expérience suggère une relation positive (les points sont aligné sur une droite ascendante) et élevée (les points sont quasi-parfaitement alignés).</p>
+<p>Pour avoir un indicateur de la relation entre les deux variables, on peut calculer l’indice de corrélation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(Salaires<span class="sc">$</span>age,Salaires<span class="sc">$</span>experience)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La corrélation est ici de 0,98, ce qui est proche de 1, ce qui suggère une forte corrélation positive entre les deux variables. Rien d’étonnant, l’expérience vient avec l’age.</p>
+<p>Le graphique ci-dessous présente des simulations de nuages de points et les indices de corrélations associés en distinguant le lien positif ou négatif et la dispersion plus ou moins forte des données autour d’une droite indiquant une relation linéaire entre les deux variables.</p>
+<p>Quand est-ce qu’une relation est considérée comme forte ? Il n’y a pas de règle absolue, mais on peut se dire <em>par convention</em> qu’une corrélation en valeur absolue supérieure à 0,5 indique une forte corrélation.</p>
+<p><img src="images/clipboard-2236189371.png" class="img-fluid"></p>
+</section>
+<section id="corrélation-de-pearson-et-de-spearman" class="level3" data-number="3.1.2">
+<h3 data-number="3.1.2" class="anchored" data-anchor-id="corrélation-de-pearson-et-de-spearman"><span class="header-section-number">3.1.2</span> Corrélation de Pearson et de Spearman ?</h3>
+<p>Par défaut, la fonction cor calcule une corrélation dite “de Pearson”, utile pour décrire des relations linéaires monotones entre des variables quantitatives, et lorsque les courbes des distributions des variables ont à peu près une “forme normale”, c’est-à-dire symétrique et en cloche. L’indice de corrélation de Pearson est assez sensible aux points aberrants, les “outliers”.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Mais en fait, c’est quoi une distribution normale ?</p>
+<p>C’est une distribution qui suit la “loi normale” dont la courbe s’appelle aussi courbe de Gauss ou courbe en cloche, elle est symétrique par rapport à sa moyenne.</p>
+<p>Cette distribution particulière est rarement présente dans un jeu de données sauf pour certaines variables particulières (la taille, le poids dans une population).</p>
+<p>Cette distribution a beaucoup de propriétés statistiques particulières qui la rende intéressante comme point de départ d’une description statistique.</p>
+<p>On retrouve aussi cette loi statistique quand on cherche à faire de l’inférence statistique (établir des résultats pas seulement à l’échelle de son échantillon mais pour l’ensemble de la population dont il est représentatif).</p>
+</div>
+</div>
+<p>On peut résumer quelques configurations idéal-typiques entre deux variables quantitatives avec la figure ci-dessous :</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-143207122.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Type de relations entre deux variables quantitatives</figcaption>
+</figure>
+</div>
+<p>Lorsque ces conditions ne sont pas bien remplies, on peut réfléchir à calculer une corrélation dite “de Spearman”, aussi appelée “corrélation des rangs”. Le principe est que la corrélation est calculée sur les rangs des valeurs des variables plutôt que sur leur valeur elles-mêmes. Ce peut être par exemple assez utile pour travailler sur la relation entre l’âge et le salaire, dans la mesure où le salaire a une distribution très asymétrique (on pourrait aussi transformer le salaire en log pour que la distribution soit moins dissymétrique).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(Salaires<span class="sc">$</span>age, Salaires<span class="sc">$</span>salaire, </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"pearson"</span>))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(Salaires<span class="sc">$</span>age, Salaires<span class="sc">$</span>salaire, </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"spearman"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>On travaille ici sur des données qui n’ont pas de valeur manquante (des NA), sinon il aurait fallu rajouter l’argument use=“complete.obs” dans la fonction corrélation.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercice">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Étudier la corrélation entre l’expérience et le salaire.</p>
+</div>
+</div>
+</section>
+<section id="la-corrélation-sur-des-sous-groupes" class="level3" data-number="3.1.3">
+<h3 data-number="3.1.3" class="anchored" data-anchor-id="la-corrélation-sur-des-sous-groupes"><span class="header-section-number">3.1.3</span> La corrélation sur des sous-groupes</h3>
+<p>On peut aussi calculer des corrélations par groupe, par exemple étudier l’association entre l’âge et l’expérience suivant le sexe.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>Salaires <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(genre) <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">cor_pearson =</span> <span class="fu">cor</span>(age, salaire, <span class="at">method =</span> <span class="st">"pearson"</span>, <span class="at">use =</span> <span class="st">"complete.obs"</span>),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">cor_spearman =</span> <span class="fu">cor</span>(age, salaire, <span class="at">method =</span> <span class="st">"spearman"</span>, <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>On pourra chercher à interpréter pourquoi l’âge a un effet plus fort sur le salaire chez les hommes que chez les femmes (carrières plus linéaires pour les hommes etc).</p>
+<p>Dans esquisse, on peut utiliser l’onglet color et/ou facet pour créer deux nuages de points séparés pour les hommes et les femmes. À noter que la forme du nuage suggère que quel que soit l’âge, le salaire reste très faible et ne varie pas en fonction de l’âge (travail à temps partiel ?).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-816412439.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Nuages de points avec facet dans esquisse</figcaption>
+</figure>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercice">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Étudier la corrélation entre l’expérience et le salaire suivant la catégorie raciale.</p>
+</div>
+</div>
+</section>
+<section id="matrice-des-corrélations-et-matrice-des-nuages-de-points" class="level3" data-number="3.1.4">
+<h3 data-number="3.1.4" class="anchored" data-anchor-id="matrice-des-corrélations-et-matrice-des-nuages-de-points"><span class="header-section-number">3.1.4</span> Matrice des corrélations et matrice des nuages de points</h3>
+<p>On peut enfin vouloir créer une matrice des corrélations, par exemple de toutes les variables quantitatives de notre jeu de données :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>Salaires <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">where</span>(is.numeric))  <span class="sc">|&gt;</span>     <span class="co"># Sélectionne toutes les variables numériques</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span>(<span class="at">use =</span> <span class="st">"complete.obs"</span>, <span class="at">method =</span> <span class="st">"pearson"</span>) <span class="sc">|&gt;</span> <span class="co"># Matrice de corrélation</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">2</span>) <span class="co"># arrondit les décimales à deux </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Cette matrice de corrélation peut aussi être représentée avec des nuages de points grâce au package GGally que nous avons chargé dans ce chapitre :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Salaires <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">where</span>(is.numeric)) <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggcorr</span>(<span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">label_round =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ou :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>Salaires <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">where</span>(is.numeric)) <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggpairs</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="lassociation-entre-une-variable-quali-et-une-variable-quanti-et-la-boite-à-moustaches" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="lassociation-entre-une-variable-quali-et-une-variable-quanti-et-la-boite-à-moustaches"><span class="header-section-number">3.2</span> L’association entre une variable quali et une variable quanti et la boite à moustaches</h2>
+<section id="statistiques-univariées-par-groupe" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="statistiques-univariées-par-groupe"><span class="header-section-number">3.2.1</span> Statistiques univariées par groupe</h3>
+<p>Dans le chapitre sur les statistiques univariées, nous avons abordé les cinq nombres de Tukey et les quantiles pour résumer une distribution d’une variable quantitative.</p>
+<p>Grâce aux lignes de codes mises en place, nous avons juste besoin d’ajouter une autre fonction pour réaliser ces statistiques en fonction de différentes modalités d’une variable, à savoir, group_by :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>Salaires <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(genre) <span class="sc">|&gt;</span> <span class="co"># ou sexe</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">reframe</span>(</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">stat =</span> <span class="fu">c</span>(<span class="st">"min"</span>, <span class="st">"Q1"</span>, <span class="st">"médiane"</span>, <span class="st">"Q3"</span>, <span class="st">"max"</span>),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">salaire =</span> <span class="fu">fivenum</span>(salaire)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Si on veut obtenir deux colonnes séparées pour les Hommes et les Femmes, il suffit d’ajouter une fonction pivot_wider, qui redéploie le tableau, en prenant comme nouveaux noms de colonnes les modalités la variable indiquée par l’argument names_from (ici genre, ou sexe) et les valeurs assignées sont celles de la colonne précédemment nommée salaire :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>Salaires <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(genre) <span class="sc">|&gt;</span> <span class="co"># ou sexe</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">reframe</span>(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">stat =</span> <span class="fu">c</span>(<span class="st">"min"</span>, <span class="st">"Q1"</span>, <span class="st">"médiane"</span>, <span class="st">"Q3"</span>, <span class="st">"max"</span>),</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">salaire =</span> <span class="fu">fivenum</span>(salaire)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from=</span>genre,<span class="at">values_from=</span>salaire)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>À ce propos, nous venons de réaliser notre première transformation d’un tableau de données dans R ! Pas si compliqué, non ? Pour quelques outils de transformation si besoin, voir les <a href="https://bioinformatics.ccr.cancer.gov/docs/rintro/resources/tidyr_cheatsheet.pdf">cheatsheet de R</a>…</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercice">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Créer un tableau des quantiles de salaire suivant la race. Dans le tableau final, les colonnes correspondront aux différentes catégories raciales. Faire une sortie de ce tableau dans le Viewer.</p>
+</div>
+</div>
+</section>
+<section id="résumer-par-la-moyenne-et-lécart-type" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="résumer-par-la-moyenne-et-lécart-type"><span class="header-section-number">3.2.2</span> Résumer par la moyenne et l’écart-type</h3>
+<p>Il est assez courant dans les articles de décrire ses variables quantitatives en indiquant la moyenne (indicateur de centralité) et l’écart-type (indicateur de dispersion, correspondant à la racine carrée de la variance).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>Salaires <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(genre) <span class="sc">|&gt;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean=</span> <span class="fu">mean</span>(age,<span class="at">na.rm=</span>T),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd=</span> <span class="fu">sd</span>(age,<span class="at">na.rm=</span>T),</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1341744359.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Moyenne et écart-type de l’âge pour les hommes et les femmes</figcaption>
+</figure>
+</div>
+<p>Pourquoi ces deux indicateurs sont-ils utilisés ? D’abord, on peut dire ici avec ce tableau qu’en moyenne les femmes sont un peu plus âgées que les hommes et qu’il y a aussi une plus forte variabilité de l’âge chez les femmes que chez les hommes (sd pour écart-type). Par ailleurs, <em>si on suppose que l’âge a un distribution normale dans l’échantillon</em> (condition rarement remplie mais passons), on peut dire que :</p>
+<ul>
+<li><p>68 % des femmes ont un âge compris entre [38-12 ; 38 + 12]=[26 ; 50] et 68 % des hommes ont un âge compris entre [25 ; 47],</p></li>
+<li><p>95 % des femmes ont un âge compris entre [38-<strong>2</strong>*12 ; 38 + <strong>2</strong>*12]=[14 ; 62] et 95 % des hommes ont un âge compris entre [14; 24],</p></li>
+<li><p>99 % des femmes ont un âge compris entre [38-<strong>3</strong>*12 ; 38 + <strong>3</strong>*12], etc…</p></li>
+</ul>
+<p>Bref, tout cela donnerait des intervalles tout à fait cohérents si les distributions des variables étaient normales, ce qui est rarement le cas (enfin, pas toujours en tout cas), et l’intérêt de cette approximation est de donner corps à ce que veut dire l’écart-type comme indicateur de dispersion d’une variable.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercice">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Calculer la moyenne et l’écart-type du salaire suivant la catégorie raciale. Commenter.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Faut-il résumer une variable par sa moyenne ou sa médiane ?</p>
+<p>Par son écart-type ou par des quantiles ?</p>
+<p>La première option est très courante (notamment dans les revues anglophones) mais pas forcément la plus judicieuse…</p>
+<p>Quand on travaille sur des distributions asymétriques (donc non normales) !</p>
+<p>Car :</p>
+<ul>
+<li><p>la moyenne est sensible aux valeurs extrêmes d’une distribution</p></li>
+<li><p>l’idée de dispersion des données par l’écart-type ne sera pas non plus très fiable sur une telle distribution…</p></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="la-boîte-à-moustaches-un-peu-dexplication" class="level3" data-number="3.2.3">
+<h3 data-number="3.2.3" class="anchored" data-anchor-id="la-boîte-à-moustaches-un-peu-dexplication"><span class="header-section-number">3.2.3</span> La boîte à moustaches : un peu d’explication</h3>
+<p>Revenons à des statistiques plus amusantes avec John Tukey qui a proposé dans les années 1950 le graphique de la boîte à moustache pour résumer d’un coup d’oeil la distribution d’une variable quantitative. En anglais, on dit boxplot ou box-and-whisker plot (le deuxième est autrement plus amusant, comme le nom en français !).</p>
+<p>L’idée est de représenter graphiquement certaines valeurs clefs de la distribution d’une variable quantitative, de manière à visualiser en un clin d’oeil la position centrale et la dispersion des données d’une distribution. Ce type de graphique a surtout de l’intérêt quand on compare des distributions d’une même variable quantitative entre plusieurs modalités d’une variable qualitative (le sexe, les catégories raciales, etc).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1208801828.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Une boîte à moustaches</figcaption>
+</figure>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Détail sur la boîte à moustaches">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Détail sur la boîte à moustaches
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Il y a plusieurs variantes de la boîte à moustaches, mais le principe c’est qu’il y a toujours une boite et des moustaches sur les côtés. Les valeurs des extrêmités de la boîte et des moustaches, dans la version originale et celle obtenue dans R par défaut sont les valeurs suivantes :</p>
+<ul>
+<li>L’extrêmité gauche de la boîte (en rouge ici) correspond au Q1, c’est-à-dire au premier quartile (autrement dit, 25 % des individus sont situés en-dessous de cette valeur).</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(Salaires<span class="sc">$</span>salaire,<span class="at">probs=</span><span class="fl">0.25</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>L’extrêmité droite de la boîte correspond au Q3, le troisième quartile (autrement dit, 25 % des individus sont situés <em>au-dessus</em> de cette valeur).</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(Salaires<span class="sc">$</span>salaire,<span class="at">probs=</span><span class="fl">0.75</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>L’écart entre les deux limites de la boîte correspond à l’étendue inter-quartile (interquartile range), autrement dit 50 % des individus de la distribution prennent une valeur comprise au sein de cette boîte.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(Salaires<span class="sc">$</span>salaire,<span class="at">probs=</span><span class="fl">0.75</span>)<span class="sc">-</span><span class="fu">quantile</span>(Salaires<span class="sc">$</span>salaire,<span class="at">probs=</span><span class="fl">0.25</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#ou : </span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">IQR</span>(Salaires<span class="sc">$</span>salaire)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><p>La barre au milieu de la distribution correspond à la médiane de la distribution.</p></li>
+<li><p>L’extrêmité basse ou à gauche de la moustache correspond au premier quartile moins 1,5 fois l’écart inter-quartile (‘minimum’=Q1-1.5*IQR).</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(Salaires<span class="sc">$</span>salaire,<span class="at">probs=</span><span class="fl">0.25</span>)<span class="sc">-</span><span class="fl">1.5</span><span class="sc">*</span><span class="fu">IQR</span>(Salaires<span class="sc">$</span>salaire)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>L’extrêmité haute ou à droite de la moustache correspond au troisième quartile plus 1,5 fois l’écart inter-quartile (‘maximum’=Q3+1.5*IQR).</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(Salaires<span class="sc">$</span>salaire,<span class="at">probs=</span><span class="fl">0.75</span>)<span class="sc">+</span><span class="fl">1.5</span><span class="sc">*</span><span class="fu">IQR</span>(Salaires<span class="sc">$</span>salaire)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Si on comprend relativement facilement l’intérêt des extrêmités de la boîte comme indicateurs de distribution, pourquoi diable cette définition des extrêmités des moustaches ? Pour le comprendre, il faut encore revenir à la densité de distribution d’une loi normale :</p>
+<ul>
+<li><p>Par définition, il y a 50% des observations de la distribution entre le Q1 et le Q3</p></li>
+<li><p>Dans le cas d’une distribution normale (symétrique par rapport à la moyenne, qui est alors aussi égale à la médiane et au mode), environ 25% des observations sont comprises entre l’extrêmité de la moustache inférieure et le le Q1, de même à droite du Q3 jusqu’à la limite de la moustache supérieure.</p></li>
+<li><p>Ce qui est en dehors des extrêmités, ce sont alors des points aberrants (qui représentent dans le cas d’une loi normale exactement 0,7% des observations, ce qu’on pourrait montrer mathématiquement, mais on l’a ici simulé sur une distribution normale avec 10&nbsp;000 observations et on obtient 0,6% en additionnant à gauche et à droite, bon c’est presque ça !).</p></li>
+</ul>
+<p>En somme, les moustaches nous indiquent l’étendue des valeurs non aberrantes de la distribution.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-816752465.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Densité et boîte à moustaches d’une distribution normale</figcaption>
+</figure>
+</div>
+<p>À noter : si la distribution statistique décrite n’est pas normale, alors il n’est pas dit que les outliers représentent seulement 0,7%, comme on le voit aisément avec cette simulation d’une distribution assez asymétrique, où les outliers représentent 5,5% des observations.</p>
+<p><img src="images/clipboard-1592210662.png" class="img-fluid"></p>
+<p>Cela reste faible et montre bien l’intérêt de la boîte à moustaches : elle nous montre l’étendue de quasi toutes les observations. Le décalage observé sur ce second graphique de la boîte et de la médiane (qui n’est plus centré) nous montre bien que la courbe est asymétrique.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="la-boîte-à-moustaches-un-peu-de-pratique" class="level3" data-number="3.2.4">
+<h3 data-number="3.2.4" class="anchored" data-anchor-id="la-boîte-à-moustaches-un-peu-de-pratique"><span class="header-section-number">3.2.4</span> La boîte à moustaches : un peu de pratique</h3>
+<p>Pour réaliser des boîtes à moustaches, rien de plus simple, nous pouvons de nouveau avoir recours à esquisse :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">esquisser</span>(Salaires)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3997311555.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Boîte à moustaches du salaires entre les hommes et les femmes</figcaption>
+</figure>
+</div>
+<p>On voit bien qu’aussi bien chez les hommes que les femmes, la distribution du salaire est très asymétrique… Beaucoup de monde qui gagne peu et une minorité qui gagne pas mal, les outliers sont tous à des niveaux stratosphériques par rapport au reste de la distribution…</p>
+<p>Mais on voit aussi que la médiane du salaire des hommes et plus élevée que celle des femmes et que l’étendue des valeurs de salaire est plus forte chez les hommes que chez les femmes.</p>
+<p>L’asymétrie de la distribution justifie souvent sa transformation logarithmique ce qui la rend plus “symétrique” (on fait log(Salaires$salaire), ce qu’on peut faire directement dans Esquisse en choisissant log dans Y-axis transform, et fait alors surtout apparaitre que les femmes gagnent moins que les hommes.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1508711784.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Boîtes à moustaches sur le logarithme du salaire</figcaption>
+</figure>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercice">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Créer la boîte à moustaches de l’âge entre les hommes et les femmes. Que peut-on dire par rapport à la section précédente ?</p>
+<p>Créer la boîte à moustache de l’âge suivant les catégories raciales. Commenter.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="lassociation-entre-deux-variables-qualis-et-le-tableau-croisé" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="lassociation-entre-deux-variables-qualis-et-le-tableau-croisé"><span class="header-section-number">3.3</span> L’association entre deux variables qualis et le tableau croisé</h2>
+<section id="sur-quelques-conventions-du-tableau-croisé" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="sur-quelques-conventions-du-tableau-croisé"><span class="header-section-number">3.3.1</span> Sur quelques conventions du tableau croisé</h3>
+<p>Nous en arrivons au tableau croisé pour étudier les associations entre deux variables qualitatives.</p>
+<p>D’abord, rappelons quelques <em>conventions.</em> On s’emmêle facilement les pinceaux quand on fait des tableaux croisés, et on peut garder à l’esprit quelques petites choses en tête :</p>
+<ul>
+<li><p>Quelle est ma <em>variable-réponse</em> ou ma <em>variable dépendente,</em> c’est à dire la variable dont on suppose qu’elle dépend d’un autre facteur ?</p></li>
+<li><p>Quelle est ma <em>variable indépendante</em>, c’est à dire la variable dont on suppose qu’elle a un effet sur la <em>variable dépendante</em> ?</p></li>
+</ul>
+<p>On peut par exemple ici supposer que le niveau de salaire (codé de manière catégorielle) dépend du sexe, mais aussi de la catégorie raciale, du niveau d’éducation, etc. On pourrait aussi supposer que le niveau de diplôme dépend de la catégorie raciale, etc.</p>
+<p>Pour visualiser si un facteur affecte une variable dépendante, on peut réaliser un tableau croisé dans lequel :</p>
+<ul>
+<li><p>On mettra la variable dépendante “en colonnes”</p></li>
+<li><p>On met la variable indépendante “en lignes”</p></li>
+<li><p>On calcule des pourcentages en ligne (on a besoin de normaliser les effectifs des lignes pour les comparer entre elles !)</p></li>
+<li><p>On comparera alors les lignes d’une même colonne entre elles.</p></li>
+</ul>
+<p>Bien sur, ça c’est de la théorie. Il y a plein de cas où en fait on est davantage intéressé par les pourcentages en colonnes, voire les pourcentages totaux, on veut inverser les lignes et les colonnes… Toutefois, avoir ces petites conventions en tête permet de s’y retrouver quand on est un peu perdu dans ses traitements statistiques.</p>
+</section>
+<section id="mise-en-pratique-du-tableau" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="mise-en-pratique-du-tableau"><span class="header-section-number">3.3.2</span> Mise en pratique du tableau</h3>
+<p>Nous retrouvons les fonctions du package questionr. D’abord nous avons vu précédemment comment catégoriser le salaire en quintiles, ce que nous pouvons reproduire, je ne mets ci-dessous que les lignes de code correspondantes :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">icut</span>()</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>Salaires<span class="sc">$</span>salaire_rec <span class="ot">&lt;-</span> <span class="fu">cut</span>(Salaires<span class="sc">$</span>salaire,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                            <span class="at">include.lowest =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">right =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">dig.lab =</span> <span class="dv">4</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">160</span>, <span class="dv">800</span>, <span class="dv">1200</span>, <span class="dv">1920</span>, <span class="dv">11008</span>, <span class="dv">42064</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="fu">irec</span>()</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="do">## Recoding Salaires$salaire_rec into Salaires$salaire_quint</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>Salaires<span class="sc">$</span>salaire_quint <span class="ot">&lt;-</span> Salaires<span class="sc">$</span>salaire_rec <span class="sc">|&gt;</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fct_recode</span>(</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Très faible"</span> <span class="ot">=</span> <span class="st">"[160,800]"</span>,</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Faible"</span> <span class="ot">=</span> <span class="st">"(800,1200]"</span>,</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Moyen"</span> <span class="ot">=</span> <span class="st">"(1200,1920]"</span>,</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Élevé"</span> <span class="ot">=</span> <span class="st">"(1920,1.101e+04]"</span>,</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Très élevé"</span> <span class="ot">=</span> <span class="st">"(1.101e+04,4.206e+04]"</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Pour créer un tableau croisé des effectifs, on pourra écrire :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>Salaires <span class="sc">|&gt;</span> <span class="fu">freqtable</span>(race,salaire_quint)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La variable en ligne (ici, race) est la variable indépendante, c’est la première à être écrire, tandis que la variable en colonne (ici, salaire_quint) est la variable dépendante.</p>
+<p>Pour obtenir des pourcentages en ligne, il suffit d’écrire :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>Salaires <span class="sc">|&gt;</span> <span class="fu">freqtable</span>(race,salaire_quint) <span class="sc">|&gt;</span> <span class="fu">rprop</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Dans ce tableau, on peut aussi ajouter les effectifs totaux des lignes et par exemple ne pas mettre de décimales après la virgule :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>Salaires <span class="sc">|&gt;</span> <span class="fu">freqtable</span>(race,salaire_quint) <span class="sc">|&gt;</span> <span class="fu">rprop</span>(<span class="at">n=</span>T,<span class="at">digit=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Bien sur, il est possible de réaliser un tableau des pourcentages en colonne :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>Salaires <span class="sc">|&gt;</span> <span class="fu">freqtable</span>(race,salaire_quint) <span class="sc">|&gt;</span> <span class="fu">cprop</span>(<span class="at">n=</span>T,<span class="at">digit=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ou des pourcentages totaux (qu’on appelle aussi pourcentages conjoints) :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>Salaires <span class="sc">|&gt;</span> <span class="fu">freqtable</span>(race,salaire_quint) <span class="sc">|&gt;</span> <span class="fu">prop</span>(<span class="at">n=</span>T,<span class="at">digit=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercice">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><p>Étudier le lien entre le sexe et le niveau de salaire.</p></li>
+<li><p>Réaliser un tableau dans le Viewer.</p></li>
+</ol>
+</div>
+</div>
+</section>
+<section id="le-tableau-et-son-graphique" class="level3" data-number="3.3.3">
+<h3 data-number="3.3.3" class="anchored" data-anchor-id="le-tableau-et-son-graphique"><span class="header-section-number">3.3.3</span> Le tableau et son graphique</h3>
+<p>On peut aussi réaliser un diagramme à barres empilées ou adjacentes de l’association entre la catégorie raciale et le niveau de salaire :</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2502740168.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Graphique à barres avec Esquisse</figcaption>
+</figure>
+</div>
+<p>On pourrait améliorer ce graphique de deux manières :</p>
+<ul>
+<li><p>En inversant l’ordre des étiquettes empilées (Très élevé en haut, très faible en bas)</p></li>
+<li><p>En mettant l’axe des Y en pourcentages (attention, il faut avoir installer le package scales)</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(Salaires) <span class="sc">+</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> race, <span class="at">fill =</span> <span class="fu">fct_rev</span>(salaire_quint)) <span class="sc">+</span>  <span class="co"># Inverser l'ordre d'empilement</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"fill"</span>) <span class="sc">+</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">percent_format</span>()) <span class="sc">+</span> <span class="co"># Axe des Y en % avec package scales</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"PuRd"</span>, <span class="at">direction =</span> <span class="sc">-</span><span class="dv">1</span>,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">guide =</span> <span class="fu">guide_legend</span>(<span class="at">reverse =</span> <span class="cn">TRUE</span>)) <span class="sc">+</span>  <span class="co"># Légende dans le bon ordre</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Catégorie raciale"</span>,</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Pourcentage"</span>,</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Quintile de salaire"</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L),</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L),</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L),</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L),</span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L),</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L)</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2683344242.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Graphique à barres empilées amélioré</figcaption>
+</figure>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Bonus 1">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Bonus 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>On peut vouloir plutôt réaliser un diagramme à barres adjacentes plutôt que empilées. Dans ce cas, il est plus simple de repartir du tableau des pourcentages en ligne :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">#On crée le tableau croisé avec % en ligne</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>tab <span class="ot">&lt;-</span> Salaires <span class="sc">|&gt;</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">freqtable</span>(race, salaire_quint) <span class="sc">|&gt;</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rprop</span>(<span class="at">total=</span>F) <span class="co">#On enlève les % totaux</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Il faut transformer ce tableau en format tidy pour le graphique</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>df_tab <span class="ot">&lt;-</span> <span class="fu">as.data.frame.matrix</span>(tab) <span class="sc">|&gt;</span> <span class="co">#transformation en une matrice de format data.frame</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">"race"</span>) <span class="sc">|&gt;</span> <span class="co">#Les lignes étaient des "row.names" auxquelles on assigne un nom de colonne</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="sc">-</span>race,</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"salaire_quint"</span>,</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"pct"</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="co">#On transforme le tableau de telle sorte que tous les % soient dans la même colonne et les modalités de salaire également. </span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>df_tab<span class="sc">$</span>salaire_quint <span class="ot">&lt;-</span> df_tab<span class="sc">$</span>salaire_quint <span class="sc">|&gt;</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fct_relevel</span>(</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Très faible"</span>,<span class="st">"Faible"</span>,<span class="st">"Moyen"</span>,<span class="st">"Elevé"</span>,<span class="st">"Très élevé"</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_tab, <span class="fu">aes</span>(<span class="at">x =</span> salaire_quint, <span class="at">y =</span> pct <span class="sc">/</span> <span class="dv">100</span>, <span class="at">fill =</span> race)) <span class="sc">+</span></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>,<span class="at">position =</span> <span class="fu">position_dodge2</span>(<span class="at">width =</span> <span class="fl">0.9</span>,<span class="at">preserve=</span><span class="st">"single"</span>))<span class="sc">+</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(pct,<span class="dv">0</span>), <span class="st">"%"</span>)),</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>             <span class="at">position =</span> <span class="fu">position_dodge2</span>(<span class="at">width =</span> <span class="fl">0.9</span>,<span class="at">preserve=</span><span class="st">"single"</span>),</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>             <span class="at">vjust=</span><span class="sc">-</span>.<span class="dv">3</span>,</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">lim=</span><span class="fu">c</span>(<span class="dv">0</span>,.<span class="dv">45</span>),<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">percent_format</span>(<span class="at">accuracy =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Dark2"</span>, <span class="at">direction =</span> <span class="sc">-</span><span class="dv">1</span>,</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>                    <span class="at">guide =</span> <span class="fu">guide_legend</span>(<span class="at">reverse =</span> T)) <span class="sc">+</span></span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Quintile de salaire"</span>,</span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Pourcentage"</span>,</span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Catégorie raciale"</span></span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span></span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L),</span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L),</span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L),</span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L),</span>
+<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L),</span>
+<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L)</span>
+<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1796684723.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Diagramme à barres adjacentes</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Bonus 2">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Bonus 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>On pourrait aussi vouloir créer un diagramme à barres avec les étiquettes de valeurs de pourcentage sur le graphique. Dans ce cas, il est plus simple de repartir du tableau des pourcentages en ligne :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">#On crée le tableau croisé avec % en ligne</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>tab <span class="ot">&lt;-</span> Salaires <span class="sc">|&gt;</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">freqtable</span>(race, salaire_quint) <span class="sc">|&gt;</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rprop</span>()</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Il faut transformer ce tableau en format tidy pour le graphique</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>df_tab <span class="ot">&lt;-</span> <span class="fu">as.data.frame.matrix</span>(tab) <span class="sc">|&gt;</span> <span class="co">#transformation en une matrice de format data.frame</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">"race"</span>) <span class="sc">|&gt;</span> <span class="co">#Les lignes étaient des "row.names" auxquelles on assigne un nom de colonne</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>Total) <span class="sc">|&gt;</span> <span class="co">#On enlève les lignes de total</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="sc">-</span>race,</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"salaire_quint"</span>,</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"pct"</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="co">#On transforme le tableau de telle sorte que tous les % soient dans la même colonne et les modalités de salaire également. </span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>df_tab<span class="sc">$</span>salaire_quint <span class="ot">&lt;-</span> df_tab<span class="sc">$</span>salaire_quint <span class="sc">|&gt;</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fct_relevel</span>(</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Très faible"</span>,<span class="st">"Faible"</span>,<span class="st">"Moyen"</span>,<span class="st">"Elevé"</span>,<span class="st">"Très élevé"</span></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Graphique</span></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_tab, <span class="fu">aes</span>(<span class="at">x =</span> race, <span class="at">y =</span> pct <span class="sc">/</span> <span class="dv">100</span>, <span class="at">fill =</span> <span class="fu">fct_rev</span>(salaire_quint))) <span class="sc">+</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(pct,<span class="dv">0</span>), <span class="st">"%"</span>)),</span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>            <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>            <span class="at">size =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">percent_format</span>(<span class="at">accuracy =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"PuRd"</span>, <span class="at">direction =</span> <span class="sc">-</span><span class="dv">1</span>,</span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a>                    <span class="at">guide =</span> <span class="fu">guide_legend</span>(<span class="at">reverse =</span> T)) <span class="sc">+</span></span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Catégorie raciale"</span>,</span>
+<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Pourcentage"</span>,</span>
+<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Quintile de salaire"</span></span>
+<span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span></span>
+<span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb26-37"><a href="#cb26-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L),</span>
+<span id="cb26-38"><a href="#cb26-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L),</span>
+<span id="cb26-39"><a href="#cb26-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L),</span>
+<span id="cb26-40"><a href="#cb26-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L),</span>
+<span id="cb26-41"><a href="#cb26-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L),</span>
+<span id="cb26-42"><a href="#cb26-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> 18L)</span>
+<span id="cb26-43"><a href="#cb26-43" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3779074093.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Diagramme à barres empilées avec étiquettes</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercice">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Étudier le lien entre sexe et niveau de salaire à l’aide d’un diagramme à barres empilées ou adjacentes.</p>
+</div>
+</div>
+</section>
+<section id="la-force-de-lassociation" class="level3" data-number="3.3.4">
+<h3 data-number="3.3.4" class="anchored" data-anchor-id="la-force-de-lassociation"><span class="header-section-number">3.3.4</span> La force de l’association</h3>
+<p>Pour étudier l’intensité de l’association entre deux variables qualitatives, l’indice le plus évident est le V de Cramer qui prend une valeur entre 0 (pas d’association) et 1 (association parfaite).</p>
+<p>À partir de 0,2 ou 0,3, on pourra considérer qu’il y a une association notable.</p>
+<p>On le calcule ainsi :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>tab <span class="ot">&lt;-</span> Salaires <span class="sc">|&gt;</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">freqtable</span>(race, salaire_quint)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cramer.v</span>(tab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercice">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>L’intensité de l’association est-elle plus forte pour entre le salaire et le sexe ou le salaire et la catégorie raciale ?</p>
+</div>
+</div>
+</section>
+<section id="un-mot-sur-le-test-du-khi-deux" class="level3" data-number="3.3.5">
+<h3 data-number="3.3.5" class="anchored" data-anchor-id="un-mot-sur-le-test-du-khi-deux"><span class="header-section-number">3.3.5</span> Un mot sur le test du khi-deux</h3>
+<p>Difficile de ne pas évoquer pour finir le test du chi-deux, sans toutefois trop s’y attarder. Précisons que Julien Barnier a écrit un <a href="https://raw.githubusercontent.com/juba/archive_doc_khi2/master/khi2.pdf">récapitalutif très exhaustif</a> sur ce qu’est et n’est pas le test du khi-deux (ou chi-deux ou -deux ou chi-squared…).</p>
+<p>À quoi sert le test du khi-deux :</p>
+<ul>
+<li><p>Déterminer la probabilité que les lignes et les colonnes du tableau croisé sont indépendantes</p></li>
+<li><p>Évaluer si la répartition des effectifs dans une table de contingence est significativement différente de la table calculée sous l’hypothèse d’indépendance des deux variables croisées</p></li>
+</ul>
+<p><em>La distribution du salaire est-elle indépendante de celle de la catégorie raciale des individus ? Y-a-t-il une association entre race et salaire ?</em></p>
+<div class="callout callout-style-default callout-note callout-titled" title="Explications sur le test du khi-deux">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Explications sur le test du khi-deux
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>On va poser un test statistique, avec une hypothèse H0, ou hypothèse nulle qui est que :</p>
+<p><em>La distribution des quintiles de salaire est indépendante de la catégorie raciale.</em></p>
+<p>On cherche à savoir à quoi ressemblerait notre tableau croisé si les deux variables étaient effectivement indépendantes l’une de l’autre et quelle est la probabilité (la p-valeur) pour que les deux variables soient effectivement indépendantes l’une de l’autre, modulo nos fluctuations d’échantillonnage.</p>
+<p>En pratique, les variables sont indépendantes si :</p>
+<ul>
+<li><p>Les pourcentages lignes du tableau croisé sont les mêmes pour toutes les lignes</p></li>
+<li><p>Les pourcentages colonnes du tableau croisé sont les mêmes pour toutes les colonnes</p></li>
+</ul>
+<p>Dans notre exemple, lignes et colonnes ne semblent pas très indépendantes.</p>
+<p>Mais dans un échantillon issu d’une enquête, il est rare que les variables croisées soient parfaitement indépendantes car les données du tableau sont dépendantes de l’échantillon interrogé et tout échantillon est soumis à des biais (qui, si l’échantillon a été construit de manière aléatoire, sont dus <em>au hasard,</em> donc des <em>fluctuations d’échantillonage</em>).</p>
+<p>Le test du khi-deux permet de savoir à partir de quel seuil on peut estimer que les variations observées par rapport à la situation d’indépendante sont dues au hasard et à partir de quand elles sont dues à un lien entre les variables.</p>
+<p>À partir du tableau des effectifs, on peut calculer les effectifs théoriques, <em>si les deux variables étaient indépendantes</em>, grâce aux marges des lignes et des colonnes :</p>
+<p><em>Effectif théorique d’une cellule = (total ligne x total colonne) / total global</em></p>
+<p>Ce qu’on peut calculer manuellement à partir des marges (les totaux) qu’on peut obtenir par exemple en faisant ainsi :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>Salaires <span class="sc">|&gt;</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">freqtable</span>(race, salaire_quint) <span class="sc">|&gt;</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prop</span>(<span class="at">n=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>L’effectif théorique de la cellule Blanc x Très faible est donc 90,6 car :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="dv">110</span><span class="sc">*</span><span class="dv">440</span><span class="sc">/</span><span class="dv">534</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Heureusement R dispose de la fonction chisq.test() qui permet notamment d’afficher les effectifs théoriques :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">&lt;-</span>Salaires <span class="sc">|&gt;</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">freqtable</span>(race, salaire_quint)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>chi<span class="ot">&lt;-</span><span class="fu">chisq.test</span>(tab)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>chi<span class="sc">$</span>expected</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Pour mémoire les effectifs observés sont :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>chi<span class="sc">$</span>observed</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Alors à quel point les effectifs théoriques divergent des effectifs observés ?</p>
+<p>Pour ce faire, on calcule des “khi-deux partiels” définis comme la distance standardisée entre les effectifs théoriques et observés :</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1078637929.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Définition des khi-deux partiels</figcaption>
+</figure>
+</div>
+<p>Ces khi-deux partiels peuvent être calculés comme ceci :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>(chi<span class="sc">$</span>expected<span class="sc">-</span>chi<span class="sc">$</span>observed)<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>chi<span class="sc">$</span>expected</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2425509646.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Khi-deux partiels</figcaption>
+</figure>
+</div>
+<p>Ici, on voit déjà que les écarts à l’indépendance sont les plus élevés pour la cellule HispaniquexTrès faible, ce que nous avions repéré avec une surreprésentation de cette catégorie raciale parmi ceux qui gagnent de faibles salaires.</p>
+<p>On calcule ensuite la valeur du khi-deux du tableau, qui correspond à la somme des khi-deux partiels :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>((chi<span class="sc">$</span>expected<span class="sc">-</span>chi<span class="sc">$</span>observed)<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>chi<span class="sc">$</span>expected)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Qu’on obtient aussi ici :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>chi<span class="sc">$</span>statistic</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Est-ce que cette valeur est faible ou élevée ?</p>
+<p>On va pouvoir comparer cette statistique à la “loi du khi-deux”, une distribution statistique qui nous donne les valeurs théoriques du khi-deux d’un tableau sous condition d’indépendance.</p>
+<p>Cette loi dépend d’un paramètre : le nombre de degrés de libertés. Quel est le nombre de degrés de libertés ici ?</p>
+<p>Il dépend grosso modo de la taille du tableau :</p>
+<p><em>(Nombre de lignes - 1) x (Nombre de colonnes - 1)</em></p>
+<p>Ici, nous avons 3 lignes et 5 colonnes, donc le degré de liberté (ddl) est égal à 8.</p>
+<p>On le vérifie ici :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>chi<span class="sc">$</span>parameter</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-4241100990.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Loi du khi-deux suivant le degré de libertés (k)</figcaption>
+</figure>
+</div>
+<p>On va enfin calculer une probabilité (une p-valeur), qui correspond à l’aire sous la courbe théorique à droite de la valeur du khi-deux observée, qui ici vaut 0,397, comme indiqué sur la figure.</p>
+<p>En effet, rappelons-nous, la p-valeur c’est la probabilité que le khi-2 théorique soit supérieur ou égal au khi-2 observé sous condition d’indépendance.</p>
+<p>Ici, on voit que si les deux variables sont indépendantes, il y a une probabilité de presque 40&nbsp;% pour que par hasard on obtienne une valeur du khi-2 au moins aussi élevée que celle qu’on a observé (8,374).</p>
+<p>Autrement dit, notre valeur du khi-deux est assez plausible / compatible avec le fait que les deux variables soient indépendantes !</p>
+<p>Cette p-valeur nous empêche de rejeter l’hypothèse d’indépendance entre catégorie racial et salaire.</p>
+<p><em>En sciences sociales, on retient généralement le seuil d’une p-valeur de 0,05 en dessous de laquelle on estime qu’on peut rejeter l’hypothèse d’indépendance.</em></p>
+<p>Pour ce faire, il aurait fallu ici obtenir un khi-2 observé au moins égal à 15,507 (on en est loin !).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3821422757.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Distribution du khi-2 et p-valeur</figcaption>
+</figure>
+</div>
+<p>Alors que conclure ? On ne rejette pas H0, l’hypothèse d’indépendance.</p>
+<p>Mais pouvons-nous affirmer que le salaire ne dépend pas de la catégorie raciale ? Eh bien, pas vraiment non plus. En gros, on n’a pas rejeté l’idée que les deux variables sont indépendantes, et les variations observées peuvent être dues à des fluctuations d’échantillonnage… ou pas.</p>
+<p>Et si la p-valeur avait été inférieure à 0,05 ? On aurait pu rejeter H0 l’hypothèse d’indépendance et on aurait considéré qu’un lien existe entre les deux variables.</p>
+<p>On peut vérifier la p-valeur calculée comme ceci :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>chi<span class="sc">$</span>p.value</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<p>On pose l’hypothèse nulle (H0) que les deux variables sont indépendantes. On fixe un seuil de significativité pour la p-valeur égal à 0,05, en dessous de laquelle on rejette l’hypothèse d’indépendance et à ce moment là on considère qu’un lien existe entre les variables :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">&lt;-</span>Salaires <span class="sc">|&gt;</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">freqtable</span>(race, salaire_quint)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>chi<span class="ot">&lt;-</span><span class="fu">chisq.test</span>(tab)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>chi</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La p-valeur est supérieure à 0,05, donc on ne peut pas rejeter H0 et on ne peut pas conclure qu’un lien existe entre les deux variables.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Exercice">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Tester l’hypothèse d’un lien entre le sexe et les quintiles de salaire.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="exercices" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="exercices"><span class="header-section-number">3.4</span> Exercices</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercice">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><p>Créer une variable haut_revenu qui vaut “oui” si un individu appartient aux 10 % les mieux rémunérés (salaire ≥ 9e décile) et “non” sinon. Calculer la proportion d’individus ayant un haut revenu pour le genre et la race, calculer les V de Cramer et réaliser des tests du khi-deux. Réaliser des diagrammes à barres. Qui sont les plus présents en haut de l’échelle salariale ?</p></li>
+<li><p>Recoder la variable âge en quatre groupes :</p></li>
+</ol>
+<ul>
+<li><p>Moins de 30 ans</p></li>
+<li><p>30-44 ans</p></li>
+<li><p>45-59 ans</p></li>
+<li><p>60 ans et plus</p></li>
+</ul>
+<ol start="3" type="1">
+<li><p>Pour chaque groupe d’âge, calculer la médiane et les quartiles du salaire et de l’expérience. Représenter ces distributions avec des boxplots. Observe-t-on un effet d’âge linéaire ?</p></li>
+<li><p>Décrire à l’aide d’un tableau croisé la distribution de l’âge en fonction des hauts revenus. Calculer le V de Cramer et réaliser un test du khi-deux. Réaliser un diagramme à barres. Qui sont les plus présents en haut de l’échelle salariale ?</p></li>
+</ol>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./statunis.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistiques univariées et recodages des variables</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./donneespond.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Les données de sondage, des données pondérées</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

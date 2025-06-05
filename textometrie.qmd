@@ -93,7 +93,7 @@ On va créer une variable de comptage du nombre de mots dans le corps de textes 
 #On s'assure que tous les types d'apostrophes sont bien remplacés par des espaces,
 #Car quanteda le gère assez mal
 textes$Textec = str_replace_all(textes$Texte, "[‘’´`ʻʼʽʾʿˊˋ˘˙’']", " ")
-corpus <- corpus(sample$Desc_family)
+corpus <- corpus(textes$Textec)
 ```
 
 Le corpus est un ensemble de textes — ici, les 938 corps de textes des articles.

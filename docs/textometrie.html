@@ -392,7 +392,7 @@ Exercice
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#On s'assure que tous les types d'apostrophes sont bien remplacés par des espaces,</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Car quanteda le gère assez mal</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>textes<span class="sc">$</span>Textec <span class="ot">=</span> <span class="fu">str_replace_all</span>(textes<span class="sc">$</span>Texte, <span class="st">"[‘’´`ʻʼʽʾʿˊˋ˘˙’']"</span>, <span class="st">" "</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">corpus</span>(sample<span class="sc">$</span>Desc_family)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>corpus <span class="ot">&lt;-</span> <span class="fu">corpus</span>(textes<span class="sc">$</span>Textec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Le corpus est un ensemble de textes — ici, les 938 corps de textes des articles.</p>
 <p>À partir de cet objet, on peut créer des “ tokens ”, c’est-à-dire les mots contenus dans les textes. Ce processus s’accompagne d’un léger nettoyage en vue de l’analyse :</p>

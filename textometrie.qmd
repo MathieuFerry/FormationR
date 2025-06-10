@@ -13,7 +13,7 @@ Un tutoriel de la manipulation des données textuelles dans R est également pr�
 
 -   Enregistrer ce script dans un dossier (par exemple "Formation R") en le nommant par exemple 7textometrie.R.
 
--   Installer/Charger les packages suivants : tidyverse, questionr, kableExtra, esquisse, FactoMineR, explor, factoextra, rainette, quanteda, quanteda.textstats, quanteda.textplots.
+-   Installer/Charger les packages suivants : tidyverse, questionr, kableExtra, esquisse, FactoMineR, explor, factoextra, ggrepel, rainette, quanteda, quanteda.textstats, quanteda.textplots.
 
 -   Charger la base de données dans un objet nommé textes (voir chapitre 1 - Introduction pour ce faire).
 
@@ -21,7 +21,7 @@ Un tutoriel de la manipulation des données textuelles dans R est également pr�
 #| eval: false
 
 # On liste les packages dont on a besoin dans un vecteur nommé load.lib. 
-load.lib <- c("openxlsx","tidyverse", "questionr", "kableExtra", "esquisse", "FactoMineR", "explor","factoextra", "rainette", "quanteda", "quanteda.textstats", "quanteda.textplots","rainette") 
+load.lib <- c("openxlsx","tidyverse", "questionr", "kableExtra", "esquisse", "FactoMineR", "explor","factoextra","ggrepel", "rainette", "quanteda", "quanteda.textstats", "quanteda.textplots","rainette") 
 install.lib <- load.lib[!load.lib %in% installed.packages()] # On regarde les paquets qui ne sont pas installés
 for (lib in install.lib) install.packages(lib,dependencies=TRUE) # On installe ceux-ci
 sapply(load.lib,require,character=TRUE) # Et on charge tous les paquets 

@@ -172,7 +172,7 @@ Si on veut faire un graphique plus joli, on utilisera le package ggplot2 (charg�
 
 ```{r}
 #| eval: false
-esquisse(Salaires)
+esquisser(Salaires)
 ```
 
 Cela devrait charger une interface avec en haut les différentes variables du jeu de données qu'il va falloir glisser dans les cases correspondantes.
